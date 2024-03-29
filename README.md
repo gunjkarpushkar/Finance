@@ -1,6 +1,10 @@
 # AI-Finance-Assistant
 This application’s primary purpose is to apply AI and machine learning models to provide users with the best personalized financial advice. The application will analyze a person’s financial data such as expenses, savings, and income, and offer a customized recommendation for budgeting, saving, investing, and managing debt.
 
+# Link to Board
+
+https://github.com/orgs/cis3296s24/projects/87
+
 ![This is a screenshot.](images.png)
 # How to run
 Provide here instructions on how to use your application.   
