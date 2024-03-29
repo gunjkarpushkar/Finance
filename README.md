@@ -1,6 +1,5 @@
-# Project Name
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+# AI-Finance-Assistant
+This application’s primary purpose is to apply AI and machine learning models to provide users with the best personalized financial advice. The application will analyze a person’s financial data such as expenses, savings, and income, and offer a customized recommendation for budgeting, saving, investing, and managing debt.
 
 ![This is a screenshot.](images.png)
 # How to run
