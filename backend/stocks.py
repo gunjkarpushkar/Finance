@@ -1,4 +1,4 @@
-# pip install streamlit fbprophet yfinance plotly
+# pip install streamlit fbprophet yfinance plotly for dependencies
 import streamlit as st
 from datetime import date
 
