@@ -1,12 +1,21 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS  # If you're using CORS
+from flask_sqlalchemy import SQLAlchemy #for database
+# from models import Contact
+
 import os
 from werkzeug.utils import secure_filename
 import sqlite3
 
 
+
 app = Flask(__name__)
 CORS(app)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
 
@@ -48,6 +57,12 @@ def get_data():
         return jsonify({"message": "Received", "name": name}), 200
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
     
 
+# need to GET contacts
+    # create contacts (post)
+    # update contacts (patch)
+    # delete contacts (delete)
