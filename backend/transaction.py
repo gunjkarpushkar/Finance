@@ -5,6 +5,8 @@ from pdfminer.high_level import extract_text
 import tabula
 import random
 
+#hello - Nate 
+
 
 # for page_layout in extract_pages("backend/UPLOAD_FOLDER/August3-Sep2.pdf"):
 #     for element in page_layout:
