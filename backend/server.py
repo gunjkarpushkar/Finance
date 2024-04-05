@@ -6,6 +6,7 @@ import sqlite3
 
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
 
