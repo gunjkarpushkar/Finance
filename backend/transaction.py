@@ -7,11 +7,6 @@ import random
 from PyPDF2 import PdfReader
 
 
-
-
-
-
-
 def allTextFromFile():
     text = extract_text('backend/UPLOAD_FOLDER/July3-August2.pdf')
     return text
