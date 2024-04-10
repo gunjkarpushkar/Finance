@@ -36,6 +36,7 @@ def upload_file():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return "File uploaded successfully", 200
     
+# updated create_contact code, which returns contact information from frontend
 @app.route('/ceate_contact', methods = ['POST'])
 def get_user_details():
     contact = request.json.get('contact')

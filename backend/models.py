@@ -14,7 +14,7 @@ class Contact(db.Model):
             "id": self.id,
             "firstName": self.first_name,
             "lastName": self.last_name,
-            
+            # this is the line of email added 
             "email": self.email,
             "password": self.password,
         }
