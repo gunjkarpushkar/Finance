@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS  # If you're using CORS
 from flask_sqlalchemy import SQLAlchemy #for database
-from models import Contact
+#from models import Contact
 
 import os
 from werkzeug.utils import secure_filename
@@ -37,7 +37,11 @@ def upload_file():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return "File uploaded successfully", 200
     
-
+@app.route('/ceate_contact', methods = ['POST'])
+def get_user_details():
+    contact = request.json.get('contact')
+    print("contact is:", contact)
+    return jsonify({"message": "Received", "contact": contact}), 200
 
 
 
@@ -57,8 +61,8 @@ def get_data():
         return jsonify({"message": "Received", "name": name}), 200
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
     app.run(debug=True)
     
 

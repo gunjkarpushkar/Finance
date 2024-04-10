@@ -14,6 +14,6 @@ class Contact(db.Model):
             "id": self.id,
             "firstName": self.first_name,
             "lastName": self.last_name,
-           # "email": self.email,
-           "password": self.password,
+            "email": self.email,
+            "password": self.password,
         }
