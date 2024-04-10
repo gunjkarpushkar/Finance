@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS  # If you're using CORS
 from flask_sqlalchemy import SQLAlchemy #for database
 
+
 import os
 from werkzeug.utils import secure_filename
 import sqlite3
