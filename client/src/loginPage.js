@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
 
+import axios from 'axios';
+
+
 const LoginPage = ({ onLogin }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [contact, setContact] = useState("")
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
       const isAuthenticated = true; // need to verify from the databse
       if(isAuthenticated) {
         onLogin(true); // Inform App component about successful login
-        const userObject = { username: username, password: password };
-        const credentialsJson = JSON.stringify(userObject);
+
+        const updateContact = {
+          username: username,
+          password: password
+        }
+        const response = await axios.post('/contacts', { contact: updateContact });
+        console.log(response.data)
         // localStorage.setItem('userInfo', credentialsJson);
-        console.log(credentialsJson);
 
       } else {
         alert('Login Failed');
