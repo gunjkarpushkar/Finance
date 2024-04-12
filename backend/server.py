@@ -7,6 +7,10 @@ import os
 from werkzeug.utils import secure_filename
 import sqlite3
 
+from datetime import date
+import yfinance as yf
+from prophet import Prophet
+from prophet.plot import plot_plotly
 
 
 app = Flask(__name__)
@@ -60,6 +64,35 @@ def get_data():
         name = request.json.get('name')
         print("name is:", name)
         return jsonify({"message": "Received", "name": name}), 200
+    
+
+@app.route('/get_stock', methods=["GET"])
+def get_stock():
+    START = "2015-01-01"
+    TODAY = date.today().strftime("%Y-%m-%d")
+
+    stock_ticker = request.args.get('stock')
+    n_years = int(request.args.get('years'))
+    period = n_years * 365
+
+    data = yf.download(stock_ticker,START, TODAY)
+    data.reset_index(inplace=True)
+
+    df_train = data[['Date','Close']]
+    df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
+
+    m = Prophet()
+    m.fit(df_train)
+
+    future = m.make_future_dataframe(periods=period)
+    forecast = m.predict(future)
+
+    fig1 = plot_plotly(m, forecast)
+    graph_json = fig1.to_json()
+
+    return graph_json
+    
+
 
 if __name__ == '__main__':
     # with app.app_context():
