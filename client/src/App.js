@@ -12,6 +12,12 @@ function App() {
   const handleLogin = (loginStatus) => {
     setIsLoggedIn(loginStatus);
   };
+  const [forecastData, setForecastData] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleForecastData = (data) => {
+    setForecastData(data);
+  };
 
   return (
     <div>
