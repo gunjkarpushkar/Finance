@@ -5,42 +5,11 @@ from pdfminer.high_level import extract_text
 import tabula
 import random
 
-
-# for page_layout in extract_pages("backend/UPLOAD_FOLDER/August3-Sep2.pdf"):
-#     for element in page_layout:
-
-#         print(element)
-    
-
-# def extract_transactions(pdf_path):
-#     doc = fitz.open(pdf_path)
-#     transactions = []
-
-#     for page in doc:
-#         text = page.get_text("text")
-#         lines = text.split('\n')
-#         for line in lines:
-#             if line.startswith('02/'):  
-#                 parts = line.split('$')
-#                 if len(parts) > 1:
-#                     category_part = parts[0].strip()
-#                     amount_part = parts[1].strip()
-#                     category = category_part.split()[-1]  
-#                     amount = amount_part.split()[0]  
-#                     try:
-#                         amount = float(amount)
-#                         transactions.append({"category": category, "amount": amount})
-#                     except ValueError:
-#                         pass  
-
-#     return transactions
-
-# Example usage
-
+from PyPDF2 import PdfReader
 
 
 def allTextFromFile():
-    text = extract_text('backend/UPLOAD_FOLDER/Feb3-Mar2.pdf')
+    text = extract_text('backend/UPLOAD_FOLDER/July3-August2.pdf')
     return text
 
 def splitArray(text):
@@ -87,51 +56,68 @@ def getFinalAmountSpent():
     return toReturn
 
 def getAllCategories():
-    vals = []
-    toReturn = []
+    # vals = []
+    # toReturn = []
     text = allTextFromFile()
-    arr = splitArray(text)            
-    #print(arr)
-    for i in range(len(arr)):
-        if (arr[i].startswith("$") or arr[i].startswith("0") or len(arr[i]) < 5):
-            continue
-        else:
-            vals.append(arr[i])
+
         
-    popularCategories = ["merchandise", "restaurants", "gasoline", "travel/ entertainment", "supermarkets",
-                         "education"]
-    print(vals)
-    for i in range(len(vals)):
-        for j in range(len(popularCategories)):
-            if (vals[i].lower() == popularCategories[j]):
-                toReturn.append(vals[i])
-                
-    return toReturn
+    popularCategories = ["merchandise", "services", "restaurants", "gasoline", "travel/", "supermarkets",
+                         "education", "medical", "home"]
+    
+    
+    extracted_categories = []
+    for line in text.split(','):
+       flag = False
+       for word in line.split(" "):
+            for category in popularCategories:
+                if category in word.lower():
+                    if (category == "travel/"):
+                        extracted_categories.append("travel/entertainment")
+                    elif (category == "medical"):
+                        extracted_categories.append("medical services")
+                        flag = True
+                    elif (category == "home"):
+                        extracted_categories.append("home imporvement")
+                    elif flag and category == "services":
+                        flag = False
+                        continue
+                    else:
+                        extracted_categories.append(category)
+                    break
+    return extracted_categories
+
+
+
+def extract_text_from_pdf(pdf_path):
+    # if the other hard way is not working, we have to use this function
+    reader = PdfReader(pdf_path) 
+    text = ""
+    for page in reader.pages:  
+        text += page.extract_text() 
+    return text
+
+
+
+
             
 def main():
    
 
-    print(getFinalAmountSpent())
+    amount = getFinalAmountSpent()
+    cat = getAllCategories()
+    print(len(amount), len(cat))
+    print(cat)
+    for i in range(0, len(amount)):
+        print(amount[i], cat[i])
+        
+        
+    # pdf_path = 'backend/UPLOAD_FOLDER/August3-Sep2.pdf'
+    # pdf_text = extract_text_from_pdf(pdf_path)
+    # print(pdf_text)
     
-            
-    # print("\n") 
-    # print(vals)
-    # arr1 = getAllCategories()
-    # arr2 = getFinalAmountSpend()
-    # for i in range(len(arr2)):
-    #     if (arr1[i] == IndexError):
-    #         print(i, "empty", arr2[i])
-    #     else:
-    #         print(i, arr1[i], arr2[i])
-    
-    # pdf_path = 'backend/UPLOAD_FOLDER/Feb3-Mar2.pdf'
-    # transactions = extract_transactions(pdf_path)
-    # print(transactions)
+    #print(extract_transactions("backend/UPLOAD_FOLDER/August3-Sep2.pdf"))
+
     
 main()
 
 
- 
-
-# tables = tabula.read_pdf("backend/UPLOAD_FOLDER/August3-Sep2.pdf", pages ="all")
-# print(tables)
