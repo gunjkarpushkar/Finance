@@ -1,23 +1,14 @@
-from flask import jsonify, request 
+from flask import jsonify, request
 from config import app, db
 from models import Contact
 import os
 from werkzeug.utils import secure_filename
-
 import sqlite3
-
 from datetime import date
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
-
-
-
-'''
-app = Flask(__name__)
-CORS(app)
-'''
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -109,15 +100,8 @@ def getUserIncome():
     print("Income:", data['income'])
     print("Period:", data['period'])
     return jsonify({"status": "success", "message": "Income received"}), 200
-    
 
-
-
-
-
-# new stuff - trevor
-
-    
+   
 # Retrieve a contact
 @app.route("/contacts", methods=["GET"])
 def get_contacts():
@@ -125,7 +109,7 @@ def get_contacts():
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
-# Data Manipulation:
+
 # Create a contact
 @app.route("/create_contact", methods=["POST"])
 def create_contact():
@@ -165,11 +149,9 @@ def update_contact(user_id):
     contact.email = data.get("email", contact.email)
     contact.password = data.get("password", contact.password)
 
-
     db.session.commit()
 
     return jsonify({"message": "User updated."}), 200
-
 
 # Delete a contact
 @app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
