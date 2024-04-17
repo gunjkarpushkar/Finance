@@ -47,14 +47,14 @@ const LoginPage = ({ onLogin }) => {
   
     const welcomeTextStyle = {
       margin: '0px', 
-      fontSize: '24px', 
+      fontSize: '32px', 
       fontWeight: 'bold',
       textAlign: "center",
     };
   
     return (
       <main>
-        <div style={welcomeTextStyle}>Welcome to Financial Assistance</div>
+        <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
