@@ -1,18 +1,33 @@
+
 import React, { useState } from 'react';
 
+import axios from 'axios';
+
+
 const LoginPage = ({ onLogin }) => {
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    //const [contact, setContact] = useState("")
+
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
       const isAuthenticated = true; // need to verify from the databse
       if(isAuthenticated) {
         onLogin(true); // Inform App component about successful login
-        const userObject = { username: username, password: password };
-        const credentialsJson = JSON.stringify(userObject);
-        // localStorage.setItem('userInfo', credentialsJson);
-        console.log(credentialsJson);
+
+
+        // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
+        // It's used when a user submits their login credentials. (user authentication)
+        const updateContact = {
+          email: email,
+
+          password: password
+        }
+        const response = await axios.post('/contacts', { contact: updateContact });
+        console.log(response.data)
+        //localStorage.setItem('userInfo', credentialsJson);
+
 
       } else {
         alert('Login Failed');
@@ -39,20 +54,22 @@ const LoginPage = ({ onLogin }) => {
   
     const welcomeTextStyle = {
       margin: '0px', 
-      fontSize: '24px', 
+      fontSize: '32px', 
       fontWeight: 'bold',
       textAlign: "center",
     };
   
     return (
       <main>
-        <div style={welcomeTextStyle}>Welcome to Financial Assistance</div>
+        <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+
+            placeholder="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+
             style={inputStyle}
           />
           <input
@@ -68,6 +85,6 @@ const LoginPage = ({ onLogin }) => {
     );
 };
 
-
+// need a fetch in this file
   
 export default LoginPage;

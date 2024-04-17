@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
-import LoginPage from "./loginPage"; // Adjust the path as necessary
-import Navbar from './navbar'; // Ensure the path is correct
-import MainContent from './MainContent';
-import FinancialDashboard from './financialDashboard';
+import LoginPage from "./pages/loginPage.js"; // Adjust the path as necessary
+import Navbar from './components/navbar.js'; // Ensure the path is correct
+//import MainContent from './MainContent';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import StockPage from './pages/StockPage.js';
+import Home from './pages/Home.js'
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [forecastData, setForecastData] = useState(null);
+  const [error, setError] = useState(null);
+
   const handleLogin = (loginStatus) => {
     setIsLoggedIn(loginStatus);
   };
 
   return (
-      <div>
-        {isLoggedIn ? (
-          <>
-            <Navbar />
-            <MainContent /> {}
-            <FinancialDashboard/>
+    <Router>
+    <div>
+      {isLoggedIn ? (
+        <>
+          <Navbar />
+          <Routes>
+            <Route path="/stocks" element={<StockPage />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/logout" element={<LoginPage />} />
+          </Routes>
           </>
-        ) : (
-          <LoginPage onLogin={handleLogin} />
-        )}
-      </div>
-    );
-  };
+      ) : (
+        <LoginPage onLogin={handleLogin} />
+      )}
+
+    </div>
+    </Router>
+  );
+}
 
 export default App;

@@ -1,141 +1,126 @@
 import re
 import fitz
+import os
+import csv
 
 from pdfminer.high_level import extract_text
 import tabula
 import random
 
-#hello - Nate 
+from PyPDF2 import PdfReader
 
 
-# for page_layout in extract_pages("backend/UPLOAD_FOLDER/August3-Sep2.pdf"):
-#     for element in page_layout:
 
-#         print(element)
+def addMatchesToCsvFile(filename, matches, dateMatches):
     
-
-# def extract_transactions(pdf_path):
-#     doc = fitz.open(pdf_path)
-#     transactions = []
-
-#     for page in doc:
-#         text = page.get_text("text")
-#         lines = text.split('\n')
-#         for line in lines:
-#             if line.startswith('02/'):  
-#                 parts = line.split('$')
-#                 if len(parts) > 1:
-#                     category_part = parts[0].strip()
-#                     amount_part = parts[1].strip()
-#                     category = category_part.split()[-1]  
-#                     amount = amount_part.split()[0]  
-#                     try:
-#                         amount = float(amount)
-#                         transactions.append({"category": category, "amount": amount})
-#                     except ValueError:
-#                         pass  
-
-#     return transactions
-
-# Example usage
-
-#Test Commit for future reference - Nate
-
-
-
-def allTextFromFile():
-    text = extract_text('backend/UPLOAD_FOLDER/Feb3-Mar2.pdf')
-    return text
-
-def splitArray(text):
-    words = text.split("\n")
-    return words
+    dir = "backend/UPLOAD_FOLDER/"
+    if not os.path.exists(dir):
+        os.makedirs(dir)
     
-
-def getAmountSpent():
-    amount = []
-    text = allTextFromFile()    
-    for i in range(len(text)):
-        if (text[i] == "$"):
-            amount.append(text[i: i+10])
+    # index funds ETFS, bonds, Crypto, 
     
-    amount = removeDollarAndExtraCharacter(amount)    
-    return amount
+    csvFilename = "transactions.csv"
+    csvFilePath = os.path.join(dir, csvFilename)
     
-def removeDollarAndExtraCharacter(amount):
-    toReturn = []
-    for i in range(len(amount)):
-        #print("amount[i] before", amount[i])
-        amount[i] = removeUnecessaryString(amount[i])
-    
-    for i in range(len(amount)):
-        if (amount[i].startswith("-")):
-            continue
-        else:
-            toReturn.append(amount[i])
-
-    return toReturn
-
-def removeUnecessaryString(str):
-    valid = "-0123456789."
-    toReturn = ""
-    for i in range(len(str)):
-        for j in range(len(valid)):
-            if (str[i] == valid[j]):
-                toReturn += str[i]
-    return toReturn
-
-def getFinalAmountSpent():
-    amount = getAmountSpent()
-    toReturn = [float(numeric_string) for numeric_string in amount]
-    return toReturn
-
-def getAllCategories():
-    vals = []
-    toReturn = []
-    text = allTextFromFile()
-    arr = splitArray(text)            
-    #print(arr)
-    for i in range(len(arr)):
-        if (arr[i].startswith("$") or arr[i].startswith("0") or len(arr[i]) < 5):
-            continue
-        else:
-            vals.append(arr[i])
+    writeHeader = not os.path.exists(csvFilePath)
+    with open(csvFilePath, "a", newline='') as file:
+        writer = csv.writer(file)
         
-    popularCategories = ["merchandise", "restaurants", "gasoline", "travel/ entertainment", "supermarkets",
-                         "education"]
-    print(vals)
-    for i in range(len(vals)):
-        for j in range(len(popularCategories)):
-            if (vals[i].lower() == popularCategories[j]):
-                toReturn.append(vals[i])
-                
-    return toReturn
+        
+        if writeHeader:
+           writer.writerow(['Month', "Date", "Amount", "Category"])
+        
+        # removing the pdf
+        filename = filename[0:len(filename)-4]
+        month = getMonth(filename)
+        for (amount, category), date in zip(matches, dateMatches):
+            #amount = float(amount)
+            if category != "Payments and Credits":
+                try:
+                    amount = float(amount.replace(',', ''))  # Remove commas and convert to float
+                    writer.writerow([month, date, amount, category])
+                except ValueError:
+                    print(f"Skipping invalid amount: {amount}")
+            else:
+                continue
             
+def getMonth(fileName):
+    # Jan 1, Feb 2, Mar 3, Apr 4, May 5, Jun 6, Jul 7, Aug 8, Sep 9, Oct 10, Nov 11, 
+    if fileName.startswith("Jan"):
+        return 1
+    elif fileName.startswith("Feb"):
+        return 2
+    elif fileName.startswith("Mar"):
+        return 3
+    elif fileName.startswith("Apr"):
+        return 4
+    elif fileName.startswith("May"):
+        return 5
+    elif fileName.startswith("Jun"):
+        return 6
+    elif fileName.startswith("Jul"):
+        return 7
+    elif fileName.startswith("Aug"):
+        return 8
+    elif fileName.startswith("Sep"):
+        return 9
+    elif fileName.startswith("Oct"):
+        return 10
+    elif fileName.startswith("Nov"):
+        return 11
+    else:
+        return 12
+        
+        
+
+def extractTextFromPDF(pdf_path):
+    # if the other hard way is not working, we have to use this function
+    try:
+        reader = PdfReader(pdf_path) 
+        text = ""
+        for page in reader.pages:  
+            text += page.extract_text() 
+        return text
+    except Exception as e:
+        print(f"Failed to process {pdf_path}: {str(e)}")
+        return ""
+
+     
 def main():
    
 
-    print(getFinalAmountSpent())
-    
+    # amount = getFinalAmountSpent()
+    # cat = getAllCategories()
+    # print(len(amount), len(cat))
+    # print(cat)
+    # for i in range(0, len(amount)):
+    #     print(amount[i], cat[i])
+        
+    dir = "backend/UPLOAD_FOLDER/"
+    for filename in os.listdir(dir):
+        if filename.lower().endswith(".pdf"):
+            filepath = os.path.join(dir, filename)
+            pdf_text = extractTextFromPDF(filepath)
+            #print(pdf_text)
+            if pdf_text:
+                datePattern = r'^(\d{2}/\d{2}/\d{2})'
+                dateMatches = re.findall(datePattern, pdf_text, re.MULTILINE)
+                pattern = r'\$(\d{1,3}(?:,\d{3})*\.\d{2})([A-Za-z /]+)'
+                matches = re.findall(pattern, pdf_text)
+                
+                if (len(matches) == 0):
+                    pattern = r'\$\s*(-?\d{1,3}(?:,\d{3})*\.\d{2})\s+([A-Za-z/ ]+)'
+                    matches = re.findall(pattern, pdf_text)
+                
+                addMatchesToCsvFile(filename, matches, dateMatches)
+                for amount, category in matches:
+                    print(f"Amount: ${amount}, Category: {category.strip()}")
+                for dates in dateMatches:
+                    print(dates)
+            else:
+                print(f"No text extracted from {filename}")
             
-    # print("\n") 
-    # print(vals)
-    # arr1 = getAllCategories()
-    # arr2 = getFinalAmountSpend()
-    # for i in range(len(arr2)):
-    #     if (arr1[i] == IndexError):
-    #         print(i, "empty", arr2[i])
-    #     else:
-    #         print(i, arr1[i], arr2[i])
-    
-    # pdf_path = 'backend/UPLOAD_FOLDER/Feb3-Mar2.pdf'
-    # transactions = extract_transactions(pdf_path)
-    # print(transactions)
-    
+
 main()
 
 
- 
-
-# tables = tabula.read_pdf("backend/UPLOAD_FOLDER/August3-Sep2.pdf", pages ="all")
-# print(tables)
