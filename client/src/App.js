@@ -22,6 +22,7 @@ function App() {
           <Routes>
             <Route path="/stocks" element={<StockPage />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/logout" element={<LoginPage />} />
           </Routes>
           </>
       ) : (
