@@ -9,14 +9,19 @@ import StockPlot from "./StockPlot";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const handleLogin = (loginStatus) => {
-    setIsLoggedIn(loginStatus);
-  };
   const [forecastData, setForecastData] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleForecastData = (data) => {
-    setForecastData(data);
+  const handleLogin = (loginStatus) => {
+    setIsLoggedIn(loginStatus);
+  };
+
+  const handleForecastData = (data, error = null) => {
+    if (error) {
+      setError(error);
+    } else {
+      setForecastData(data);
+    }
   };
 
   return (
@@ -24,21 +29,20 @@ function App() {
       {isLoggedIn ? (
         <>
           <Navbar />
-          <MainContent /> {}
+          <MainContent />
           <FinancialDashboard />
+          <div>
+            <h1>Stock Forecast</h1>
+            <Stocks onForecastData={handleForecastData}/>
+            {error && <p>Error: {error}</p>}
+            {forecastData && <StockPlot data={forecastData} />}
+          </div>
         </>
       ) : (
         <LoginPage onLogin={handleLogin} />
       )}
-      <div>
-        <h1>Stock Forecast</h1>
-        <Stocks onForecastData={handleForecastData}/>
-        {error && <p>Error: {error}</p>}
-        {forecastData && <StockPlot data={forecastData} />}
-      </div>
     </div>
   );
 }
-
 
 export default App;
