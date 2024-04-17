@@ -1,25 +1,14 @@
-
-from flask import Flask, jsonify, request
-from flask_cors import CORS  # If you're using CORS
-from flask_sqlalchemy import SQLAlchemy #for database
-
-
 from flask import jsonify, request
 from config import app, db
 from models import Contact
 import os
 from werkzeug.utils import secure_filename
-
 import sqlite3
-
 from datetime import date
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
-
-
-app = Flask(__name__)
-CORS(app)
+import pandas as pd
 
 
 # upload folder stuff
@@ -43,7 +32,7 @@ def upload_file():
 
     
 # updated create_contact code, which returns contact information from frontend
-@app.route('/ceate_contact', methods = ['POST'])
+@app.route('/create_contact', methods = ['POST'])
 def get_user_details():
     contact = request.json.get('contact')
     print("contact is:", contact)
@@ -93,15 +82,33 @@ def get_stock():
     graph_json = fig1.to_json()
 
     return graph_json
+
+
+
+@app.route('/get_transaction_data', methods=["GET"])
+def getTransationData():
+    
+    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
+    result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
+    
+    return jsonify(result)
+
+
+@app.route("/get_income", methods=["POST"])
+
+def getUserIncome():
+    data = request.get_json()
+    print("Income:", data['income'])
+    print("Period:", data['period'])
+    return jsonify({"status": "success", "message": "Income received"}), 200
     
 
 
 
 
 
-# new stuff - trevor
-
-    
+   
 # Retrieve a contact
 @app.route("/contacts", methods=["GET"])
 def get_contacts():
@@ -116,19 +123,23 @@ def create_contact():
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
     email = request.json.get("email")
+    password = request.json.get("password")
+
 
     if not first_name or not last_name or not email:
         return (
-            jsonify({"message": "You must include a first name, last name and email"}),
+            jsonify({"message": "You must include a first name, last name, email, and password"}),
             400,
         )
 
-    new_contact = Contact(first_name=first_name, last_name=last_name, email=email)
+    new_contact = Contact(first_name=first_name, last_name=last_name, email=email, password=password)
     try:
         db.session.add(new_contact)
         db.session.commit()
     except Exception as e:
         return jsonify({"message": str(e)}), 400
+
+
 
     return jsonify({"message": "User created!"}), 201
 
@@ -145,10 +156,12 @@ def update_contact(user_id):
     contact.first_name = data.get("firstName", contact.first_name)
     contact.last_name = data.get("lastName", contact.last_name)
     contact.email = data.get("email", contact.email)
+    contact.password = data.get("password", contact.password)
+
 
     db.session.commit()
 
-    return jsonify({"message": "Usr updated."}), 200
+    return jsonify({"message": "User updated."}), 200
 
 
 # Delete a contact
