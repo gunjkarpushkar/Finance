@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import LoginPage from "./loginPage"; // Adjust the path as necessary
-import Navbar from './navbar'; // Ensure the path is correct
-import MainContent from './MainContent';
-import FinancialDashboard from './financialDashboard';
-import Stocks from "./Stocks";
-import StockPlot from "./StockPlot";
+import LoginPage from "./pages/loginPage.js"; // Adjust the path as necessary
+import Navbar from './components/navbar.js'; // Ensure the path is correct
+//import MainContent from './MainContent';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import StockPage from './pages/StockPage.js';
+import Home from './pages/Home.js'
 
 
 function App() {
@@ -16,32 +16,24 @@ function App() {
     setIsLoggedIn(loginStatus);
   };
 
-  const handleForecastData = (data, error = null) => {
-    if (error) {
-      setError(error);
-    } else {
-      setForecastData(data);
-    }
-  };
-
   return (
+    <Router>
     <div>
       {isLoggedIn ? (
         <>
           <Navbar />
-          <MainContent />
-          <FinancialDashboard />
-          <div>
-            <h1>Stock Forecast</h1>
-            <Stocks onForecastData={handleForecastData}/>
-            {error && <p>Error: {error}</p>}
-            {forecastData && <StockPlot data={forecastData} />}
-          </div>
-        </>
+          <Routes>
+            <Route path="/stocks" element={<StockPage />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/logout" element={<LoginPage />} />
+          </Routes>
+          </>
       ) : (
         <LoginPage onLogin={handleLogin} />
       )}
+
     </div>
+    </Router>
   );
 }
 
