@@ -1,11 +1,13 @@
-from server import db
+#Contains SQLAlchemy model definitions
 
+from config import db
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), unique=False, nullable=False)
     last_name = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)    #email will act as username
+
     password = db.Column(db.String(15), unique=False, nullable=False)
 
 
@@ -14,7 +16,6 @@ class Contact(db.Model):
             "id": self.id,
             "firstName": self.first_name,
             "lastName": self.last_name,
-            # this is the line of email added 
             "email": self.email,
             "password": self.password,
         }
