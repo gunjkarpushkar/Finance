@@ -1,5 +1,7 @@
 import re
 import fitz
+import os
+import csv
 
 from pdfminer.high_level import extract_text
 import tabula
@@ -8,116 +10,117 @@ import random
 from PyPDF2 import PdfReader
 
 
-def allTextFromFile():
-    text = extract_text('backend/UPLOAD_FOLDER/July3-August2.pdf')
-    return text
 
-def splitArray(text):
-    words = text.split("\n")
-    return words
+def addMatchesToCsvFile(filename, matches, dateMatches):
     
-
-def getAmountSpent():
-    amount = []
-    text = allTextFromFile()    
-    for i in range(len(text)):
-        if (text[i] == "$"):
-            amount.append(text[i: i+10])
+    dir = "backend/UPLOAD_FOLDER/"
+    if not os.path.exists(dir):
+        os.makedirs(dir)
     
-    amount = removeDollarAndExtraCharacter(amount)    
-    return amount
+    # index funds ETFS, bonds, Crypto, 
     
-def removeDollarAndExtraCharacter(amount):
-    toReturn = []
-    for i in range(len(amount)):
-        #print("amount[i] before", amount[i])
-        amount[i] = removeUnecessaryString(amount[i])
+    csvFilename = "transactions.csv"
+    csvFilePath = os.path.join(dir, csvFilename)
     
-    for i in range(len(amount)):
-        if (amount[i].startswith("-")):
-            continue
-        else:
-            toReturn.append(amount[i])
-
-    return toReturn
-
-def removeUnecessaryString(str):
-    valid = "-0123456789."
-    toReturn = ""
-    for i in range(len(str)):
-        for j in range(len(valid)):
-            if (str[i] == valid[j]):
-                toReturn += str[i]
-    return toReturn
-
-def getFinalAmountSpent():
-    amount = getAmountSpent()
-    toReturn = [float(numeric_string) for numeric_string in amount]
-    return toReturn
-
-def getAllCategories():
-    # vals = []
-    # toReturn = []
-    text = allTextFromFile()
-
+    writeHeader = not os.path.exists(csvFilePath)
+    with open(csvFilePath, "a", newline='') as file:
+        writer = csv.writer(file)
         
-    popularCategories = ["merchandise", "services", "restaurants", "gasoline", "travel/", "supermarkets",
-                         "education", "medical", "home"]
-    
-    
-    extracted_categories = []
-    for line in text.split(','):
-       flag = False
-       for word in line.split(" "):
-            for category in popularCategories:
-                if category in word.lower():
-                    if (category == "travel/"):
-                        extracted_categories.append("travel/entertainment")
-                    elif (category == "medical"):
-                        extracted_categories.append("medical services")
-                        flag = True
-                    elif (category == "home"):
-                        extracted_categories.append("home imporvement")
-                    elif flag and category == "services":
-                        flag = False
-                        continue
-                    else:
-                        extracted_categories.append(category)
-                    break
-    return extracted_categories
-
-
-
-def extract_text_from_pdf(pdf_path):
-    # if the other hard way is not working, we have to use this function
-    reader = PdfReader(pdf_path) 
-    text = ""
-    for page in reader.pages:  
-        text += page.extract_text() 
-    return text
-
-
-
-
+        
+        if writeHeader:
+           writer.writerow(['Month', "Date", "Amount", "Category"])
+        
+        # removing the pdf
+        filename = filename[0:len(filename)-4]
+        month = getMonth(filename)
+        for (amount, category), date in zip(matches, dateMatches):
+            #amount = float(amount)
+            if category != "Payments and Credits":
+                try:
+                    amount = float(amount.replace(',', ''))  # Remove commas and convert to float
+                    writer.writerow([month, date, amount, category])
+                except ValueError:
+                    print(f"Skipping invalid amount: {amount}")
+            else:
+                continue
             
+def getMonth(fileName):
+    # Jan 1, Feb 2, Mar 3, Apr 4, May 5, Jun 6, Jul 7, Aug 8, Sep 9, Oct 10, Nov 11, 
+    if fileName.startswith("Jan"):
+        return 1
+    elif fileName.startswith("Feb"):
+        return 2
+    elif fileName.startswith("Mar"):
+        return 3
+    elif fileName.startswith("Apr"):
+        return 4
+    elif fileName.startswith("May"):
+        return 5
+    elif fileName.startswith("Jun"):
+        return 6
+    elif fileName.startswith("Jul"):
+        return 7
+    elif fileName.startswith("Aug"):
+        return 8
+    elif fileName.startswith("Sep"):
+        return 9
+    elif fileName.startswith("Oct"):
+        return 10
+    elif fileName.startswith("Nov"):
+        return 11
+    else:
+        return 12
+        
+        
+
+def extractTextFromPDF(pdf_path):
+    # if the other hard way is not working, we have to use this function
+    try:
+        reader = PdfReader(pdf_path) 
+        text = ""
+        for page in reader.pages:  
+            text += page.extract_text() 
+        return text
+    except Exception as e:
+        print(f"Failed to process {pdf_path}: {str(e)}")
+        return ""
+
+     
 def main():
    
 
-    amount = getFinalAmountSpent()
-    cat = getAllCategories()
-    print(len(amount), len(cat))
-    print(cat)
-    for i in range(0, len(amount)):
-        print(amount[i], cat[i])
+    # amount = getFinalAmountSpent()
+    # cat = getAllCategories()
+    # print(len(amount), len(cat))
+    # print(cat)
+    # for i in range(0, len(amount)):
+    #     print(amount[i], cat[i])
         
-        
-    # pdf_path = 'backend/UPLOAD_FOLDER/August3-Sep2.pdf'
-    # pdf_text = extract_text_from_pdf(pdf_path)
-    # print(pdf_text)
-    
-    #print(extract_transactions("backend/UPLOAD_FOLDER/August3-Sep2.pdf"))
+    dir = "backend/UPLOAD_FOLDER/"
+    for filename in os.listdir(dir):
+        if filename.lower().endswith(".pdf"):
+            filepath = os.path.join(dir, filename)
+            pdf_text = extractTextFromPDF(filepath)
+            #print(pdf_text)
+            if pdf_text:
+                datePattern = r'^(\d{2}/\d{2}/\d{2})'
+                dateMatches = re.findall(datePattern, pdf_text, re.MULTILINE)
+                pattern = r'\$(\d{1,3}(?:,\d{3})*\.\d{2})([A-Za-z /]+)'
+                matches = re.findall(pattern, pdf_text)
+                
+                if (len(matches) == 0):
+                    pattern = r'\$\s*(-?\d{1,3}(?:,\d{3})*\.\d{2})\s+([A-Za-z/ ]+)'
+                    matches = re.findall(pattern, pdf_text)
+                
+                addMatchesToCsvFile(filename, matches, dateMatches)
+                for amount, category in matches:
+                    print(f"Amount: ${amount}, Category: {category.strip()}")
+                for dates in dateMatches:
+                    print(dates)
+            else:
+                print(f"No text extracted from {filename}")
+            
 
-    
 main()
 
 
