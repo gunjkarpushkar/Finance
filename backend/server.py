@@ -10,6 +10,7 @@ from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
 
+
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
 
@@ -83,6 +84,7 @@ def get_stock():
     return graph_json
 
 
+
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
@@ -100,6 +102,11 @@ def getUserIncome():
     print("Income:", data['income'])
     print("Period:", data['period'])
     return jsonify({"status": "success", "message": "Income received"}), 200
+    
+
+
+
+
 
    
 # Retrieve a contact
@@ -132,6 +139,8 @@ def create_contact():
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
+
+
     return jsonify({"message": "User created!"}), 201
 
 
@@ -149,9 +158,11 @@ def update_contact(user_id):
     contact.email = data.get("email", contact.email)
     contact.password = data.get("password", contact.password)
 
+
     db.session.commit()
 
     return jsonify({"message": "User updated."}), 200
+
 
 # Delete a contact
 @app.route("/delete_contact/<int:user_id>", methods=["DELETE"])

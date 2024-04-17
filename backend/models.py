@@ -1,6 +1,7 @@
 #Contains SQLAlchemy model definitions
 
-from config import db
+# from config import db
+
 
 
 class Contact(db.Model):
@@ -19,6 +20,4 @@ class Contact(db.Model):
             "email": self.email,
             "password": self.password,
         }
-
-        
 
