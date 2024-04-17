@@ -1,10 +1,4 @@
-
-from flask import Flask, jsonify, request
-from flask_cors import CORS  # If you're using CORS
-from flask_sqlalchemy import SQLAlchemy #for database
-
-
-from flask import jsonify, request
+from flask import jsonify, request 
 from config import app, db
 from models import Contact
 import os
@@ -18,9 +12,11 @@ from prophet import Prophet
 from prophet.plot import plot_plotly
 
 
+
+'''
 app = Flask(__name__)
 CORS(app)
-
+'''
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -43,7 +39,7 @@ def upload_file():
 
     
 # updated create_contact code, which returns contact information from frontend
-@app.route('/ceate_contact', methods = ['POST'])
+@app.route('/create_contact', methods = ['POST'])
 def get_user_details():
     contact = request.json.get('contact')
     print("contact is:", contact)
@@ -109,21 +105,23 @@ def get_contacts():
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
-
+# Data Manipulation:
 # Create a contact
 @app.route("/create_contact", methods=["POST"])
 def create_contact():
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
     email = request.json.get("email")
+    password = request.json.get("password")
+
 
     if not first_name or not last_name or not email:
         return (
-            jsonify({"message": "You must include a first name, last name and email"}),
+            jsonify({"message": "You must include a first name, last name, email, and password"}),
             400,
         )
 
-    new_contact = Contact(first_name=first_name, last_name=last_name, email=email)
+    new_contact = Contact(first_name=first_name, last_name=last_name, email=email, password=password)
     try:
         db.session.add(new_contact)
         db.session.commit()
@@ -145,10 +143,12 @@ def update_contact(user_id):
     contact.first_name = data.get("firstName", contact.first_name)
     contact.last_name = data.get("lastName", contact.last_name)
     contact.email = data.get("email", contact.email)
+    contact.password = data.get("password", contact.password)
+
 
     db.session.commit()
 
-    return jsonify({"message": "Usr updated."}), 200
+    return jsonify({"message": "User updated."}), 200
 
 
 # Delete a contact

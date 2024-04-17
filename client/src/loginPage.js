@@ -1,12 +1,14 @@
+
+
 import React, { useState } from 'react';
 
 import axios from 'axios';
 
 
 const LoginPage = ({ onLogin }) => {
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [contact, setContact] = useState("")
+    //const [contact, setContact] = useState("")
   
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -14,13 +16,15 @@ const LoginPage = ({ onLogin }) => {
       if(isAuthenticated) {
         onLogin(true); // Inform App component about successful login
 
+        // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
+        // It's used when a user submits their login credentials. (user authentication)
         const updateContact = {
-          username: username,
+          email: email,
           password: password
         }
         const response = await axios.post('/contacts', { contact: updateContact });
         console.log(response.data)
-        // localStorage.setItem('userInfo', credentialsJson);
+        //localStorage.setItem('userInfo', credentialsJson);
 
       } else {
         alert('Login Failed');
@@ -58,9 +62,9 @@ const LoginPage = ({ onLogin }) => {
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            placeholder="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={inputStyle}
           />
           <input
