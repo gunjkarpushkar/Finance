@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Navbar() {
   // Inline style for the links
@@ -20,11 +21,12 @@ function Navbar() {
         `}
       </style>
       <div className="navbar" style={{ padding: '50px 0', backgroundColor: 'black', textAlign: 'center' }}>
-        <a href="#home" style={linkStyle}>Home</a>
+        <Link to="/home" style={linkStyle}>Home</Link>
         {/* <a href="#news" style={linkStyle}>News</a> */}
         {/* <a href="#contact" style={linkStyle}>Contact</a> */}
         {/* <a href="#about" style={linkStyle}>About</a> */}
-        <a href="#logout" style={linkStyle}>Logout</a>
+        <Link to="/logout" href="#logout" style={linkStyle}>Logout</Link>
+        <Link to="/stocks" style={linkStyle}>Stocks</Link>
       </div>
     </>
   );

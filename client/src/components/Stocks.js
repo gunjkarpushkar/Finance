@@ -37,7 +37,7 @@ const Stocks = ({ onForecastData }) => {
           value={years}
           onChange={e => setYears(parseInt(e.target.value))}
           min="1"
-          max="4"
+          max="5"
         />
       </label>
       <button onClick={handleForecast}>Get Forecast</button>

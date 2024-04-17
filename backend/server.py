@@ -10,6 +10,7 @@ from datetime import date
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
+import pandas as pd
 
 
 
@@ -89,6 +90,25 @@ def get_stock():
     graph_json = fig1.to_json()
 
     return graph_json
+
+
+@app.route('/get_transaction_data', methods=["GET"])
+def getTransationData():
+    
+    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
+    result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
+    
+    return jsonify(result)
+
+
+@app.route("/get_income", methods=["POST"])
+
+def getUserIncome():
+    data = request.get_json()
+    print("Income:", data['income'])
+    print("Period:", data['period'])
+    return jsonify({"status": "success", "message": "Income received"}), 200
     
 
 
