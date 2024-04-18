@@ -1,0 +1,9 @@
+
+/backend/node_modules
+/backend/__pycache__
+backend/package-lock.json
+backend/package.json
+client/package.json
+.DS_Store
+/backend/UPLOAD_FOLDER
+.DS_Store
