@@ -81,7 +81,15 @@ def get_stock():
     fig1 = plot_plotly(m, forecast)
     graph_json = fig1.to_json()
 
-    return graph_json
+    latest_prediction = forecast.iloc[-1]['yhat']
+    stock_info = yf.Ticker(stock_ticker)
+    current_price = stock_info.history(period="1d")['Close'].iloc[-1]
+    response = {
+        "latest_prediction": latest_prediction,
+        "current_price": current_price,
+        "graph": graph_json
+    }
+    return jsonify(response)
 
 
 

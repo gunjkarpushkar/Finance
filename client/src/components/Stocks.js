@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../pages/stockPage.css";
 
 const Stocks = ({ onForecastData }) => {
-  const [selectedStock, setSelectedStock] = useState("AAPL"); // Default stock symbol
-  const [customStock, setCustomStock] = useState(""); // State to hold custom stock input
-  const [years, setYears] = useState(2); // Default number of years
-  const [isValidStock, setIsValidStock] = useState(true); // State to track valid stock ticker
+  const [selectedStock, setSelectedStock] = useState("AAPL");
+  const [customStock, setCustomStock] = useState("");
+  const [years, setYears] = useState(2);
 
   const handleForecast = async () => {
     try {
@@ -18,28 +18,23 @@ const Stocks = ({ onForecastData }) => {
         },
       });
       onForecastData(response.data);
-      setIsValidStock(true); // Resetting to true when fetching is successful
     } catch (error) {
       console.error("Error fetching forecast data:", error);
-      setIsValidStock(false); // Setting to false when fetching fails
     }
   };
 
   const handleCustomStockChange = (e) => {
     setCustomStock(e.target.value);
-    setIsValidStock(true); // Resetting validity on input change
   };
 
   return (
-    <div>
-      <label>
-        Select stock:
+    <div className="stock-form">
+      <div className="form-group">
+        <label htmlFor="stock-select">Select stock:</label>
         <select
+          id="stock-select"
           value={selectedStock}
-          onChange={(e) => {
-            setSelectedStock(e.target.value);
-            setIsValidStock(true); // Resetting validity when selecting from dropdown
-          }}
+          onChange={(e) => setSelectedStock(e.target.value)}
         >
           <option value="GOOG">GOOG</option>
           <option value="AAPL">AAPL</option>
@@ -51,23 +46,27 @@ const Stocks = ({ onForecastData }) => {
           <input
             type="text"
             placeholder="Enter Stock Ticker"
+            className="custom-stock-input"
             value={customStock}
             onChange={handleCustomStockChange}
           />
         )}
-      </label>
-      <label>
-        Select years of prediction:
+      </div>
+      <div className="form-group">
+        <label htmlFor="years-input">Select years of prediction:</label>
         <input
+          id="years-input"
           type="number"
           value={years}
-          onChange={(e) => setYears(parseInt(e.target.value))}
+          onChange={(e) => setYears(parseInt(e.target.value, 10))}
           min="1"
           max="5"
+          className="years-input"
         />
-      </label>
-      {!isValidStock && <p style={{ color: "red" }}>Invalid stock ticker</p>}
-      <button onClick={handleForecast}>Get Forecast</button>
+      </div>
+      <button onClick={handleForecast} className="forecast-button">
+        Get Forecast
+      </button>
     </div>
   );
 };
