@@ -1,81 +1,142 @@
 import React, { useState } from 'react';
-
-// The Axios library, a promise-based HTTP client used to make requests to external
-//resources, in this case, your backedn, server.
 import axios from 'axios';
+import './financialDashboard.css'; // Ensure this points to the actual CSS file location
 
 function FinancialDashboard() {
-  const [name, setName] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null)
-  // initialize name with empty string. setName will be used to update
+  const [documentLines, setDocumentLines] = useState([createNewLine('statement')]);
 
-  const handleSubmit = async (event) => {
-    // an asynchronus function named handleSubmit that wull be called when the form is submitted.
-    // It will await the response from an HTTP request made using Axios.
-    event.preventDefault();
-    try {
-      const response = await axios.post('/message', { name });
-      // Makes a post request to the '/message' endpoint, sending an object with a 
-      // name property. It waits for the request to complete and stores the response in the 
-      // "response" variable. This is where the form data is sent to the server. 
-      console.log(response.data); // Log the response from the server
-      alert('Name submitted successfully');
-    } catch (error) {
-      console.error('There was an error submitting the form:', error);
-      alert('Error submitting name');
-    }
+  function createNewLine(documentType) {
+    return {
+      file: null,
+      documentType: documentType,
+      startDate: '',
+      endDate: '',
+      amount: '',
+      date: ''
+    };
+  }
+
+  const handleDocumentTypeChange = (index, documentType) => {
+    const newLines = [...documentLines];
+    newLines[index] = createNewLine(documentType);
+    setDocumentLines(newLines);
   };
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0])
-  } 
+  const handleFieldChange = (index, field, value) => {
+    const newLines = [...documentLines];
+    newLines[index][field] = value;
+    setDocumentLines(newLines);
+  };
 
-  const handleFileUpload = async () => {
-    if (!selectedFile) {
-        alert("Please select a file first");
-        return;
+  const handleFileChange = (index, file) => {
+    if (file.type !== 'application/pdf') {
+      alert("Please select a PDF file.");
+      return;
+    }
+    handleFieldChange(index, 'file', file);
+  };
+
+  const handleFileUpload = async (index) => {
+    const line = documentLines[index];
+    if (line.documentType === 'statement' && !line.file) {
+      alert("Please select a PDF file first");
+      return;
     }
 
     const formData = new FormData();
-    formData.append('file', selectedFile)
+    if (line.file) {
+      formData.append('file', line.file);
+    }
+    formData.append('documentType', line.documentType);
+    if (line.startDate) formData.append('startDate', line.startDate);
+    if (line.endDate) formData.append('endDate', line.endDate);
+    if (line.amount) formData.append('amount', line.amount);
+    if (line.date) formData.append('date', line.date);
 
     try {
-        const r = await axios.post('/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        console.log(r.data)
-        alert("File uploaded successfully");
+      const response = await axios.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      alert("Data uploaded successfully");
     } catch (error) {
-        console.error("Error uploading file: ", error)
-        alert("Error uploading file")
+      console.error("Error uploading data: ", error);
+      alert("Error uploading data");
     }
-};
+  };
 
-
+  const addUploadLine = () => {
+    setDocumentLines([...documentLines, createNewLine('statement')]);
+  };
 
   return (
     <div>
-        <h1>Submit atleast 5 past transaction files</h1>
-        <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name:</label>
-        <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-        />
-        <button type="submit">Submit</button>
-        </form>
-        <div>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleFileUpload}>Upload File</button>
-      </div>
-    </div>
+      <header>
+        <h1>Upload Your Financial Document</h1>
+      </header>
+      <main>
+        {documentLines.map((line, index) => (
+          <div key={index} className="form-group">
+            <select
+              value={line.documentType}
+              onChange={(e) => handleDocumentTypeChange(index, e.target.value)}
+            >
+              <option value="statement">Statement</option>
+              <option value="income">Income</option>
+              <option value="cashSpending">Cash Spending</option>
+            </select>
 
+            {line.documentType === 'statement' && (
+              <>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => handleFileChange(index, e.target.files[0])}
+                />
+                <input
+                  type="date"
+                  placeholder="Start Date"
+                  value={line.startDate}
+                  onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
+                />
+                <input
+                  type="date"
+                  placeholder="End Date"
+                  value={line.endDate}
+                  onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
+                />
+              </>
+            )}
+
+            {(line.documentType === 'income' || line.documentType === 'cashSpending') && (
+              <>
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={line.amount}
+                  onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                />
+                <input
+                  type="date"
+                  placeholder="Date"
+                  value={line.date}
+                  onChange={(e) => handleFieldChange(index, 'date', e.target.value)}
+                />
+              </>
+            )}
+            
+            <button onClick={() => handleFileUpload(index)}>Upload Data</button>
+          </div>
+        ))}
+        <button onClick={addUploadLine}>Add Another Document</button>
+      </main>
+      <footer>
+        <p>&copy; 2024 Your Company Name</p>
+      </footer>
+    </div>
   );
-};
+}
 
 export default FinancialDashboard;
