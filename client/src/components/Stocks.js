@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../pages/stockPage.css";
 
-const Stocks = ({ onForecastData }) => {
+const Stocks = ({ onForecastData, onError }) => {
   const [selectedStock, setSelectedStock] = useState("AAPL");
   const [customStock, setCustomStock] = useState("");
   const [years, setYears] = useState(2);
@@ -19,6 +19,7 @@ const Stocks = ({ onForecastData }) => {
       });
       onForecastData(response.data);
     } catch (error) {
+      onError(error);
       console.error("Error fetching forecast data:", error);
     }
   };

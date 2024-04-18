@@ -25,6 +25,12 @@ function StockPage() {
     setCurrentPrice(currPrice);
     setLatestPrediction(latestPrice);
     setDifference(latestPrice - currPrice);
+    // Reset the error message upon every succcessful retrieval
+    setError(null);
+  };
+
+  const handleError = (error) => {
+    setError("Invalid stock ticker");
   };
 
   return (
@@ -40,7 +46,7 @@ function StockPage() {
         </p>
       </header>
       <main>
-        <Stocks onForecastData={handleForecastData} />
+        <Stocks onForecastData={handleForecastData} onError={handleError} />
         {error && <div className="error-message">Error: {error}</div>}
         <div className="price-info">
           <p>
@@ -58,8 +64,8 @@ function StockPage() {
         </div>
         <div className="plot-container">
           <p>
-            Hover your mouse over the graph to see stock prices! You can use the
-            graph below to adjust your view of the graph.
+            TIP: Hover your mouse over the graph to see stock prices! You can
+            use the 'ds' graph below to adjust your view of the graph.
           </p>
           {forecastData && <StockPlot data={forecastData} />}
         </div>
