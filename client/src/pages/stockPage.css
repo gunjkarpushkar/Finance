@@ -1,0 +1,115 @@
+.stock-page {
+  font-family: "Arial", sans-serif;
+  margin: 20px;
+}
+
+.plot-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+.header {
+  background-color: #f2f4f8;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.header h1 {
+  color: #333;
+  font-size: 40px;
+}
+
+.header p {
+  color: #666;
+  font-size: 16px;
+  font-style: italic;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+}
+
+.price-info {
+  background-color: #e0eafd;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.price-info p {
+  margin: 5px 0;
+}
+
+.plot-container {
+  margin-top: 20px;
+}
+
+.plot-container p {
+  color: #444;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .stock-page {
+    margin: 10px;
+  }
+
+  .header,
+  .price-info,
+  .plot-container {
+    padding: 10px;
+  }
+}
+
+.stock-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+select,
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+input[type="text"].custom-stock-input,
+input[type="number"].years-input {
+  margin-top: 8px;
+}
+
+button.forecast-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button.forecast-button:hover {
+  background-color: #0056b3;
+}
