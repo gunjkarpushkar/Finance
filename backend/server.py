@@ -81,14 +81,22 @@ def get_stock():
     fig1 = plot_plotly(m, forecast)
     graph_json = fig1.to_json()
 
-    return graph_json
+    latest_prediction = forecast.iloc[-1]['yhat']
+    stock_info = yf.Ticker(stock_ticker)
+    current_price = stock_info.history(period="1d")['Close'].iloc[-1]
+    response = {
+        "latest_prediction": latest_prediction,
+        "current_price": current_price,
+        "graph": graph_json
+    }
+    return jsonify(response)
 
 
 
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
-    df = pd.read_csv("/Users/leili/Desktop/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
     
