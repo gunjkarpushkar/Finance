@@ -8,8 +8,6 @@ import Home from "./pages/Home.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [forecastData, setForecastData] = useState(null);
-  const [error, setError] = useState(null);
 
   const handleLogin = (loginStatus) => {
     setIsLoggedIn(loginStatus);
