@@ -1,4 +1,3 @@
-/* Reset some default browser styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -67,5 +66,3 @@ footer {
 #cashSpendingFields {
   display: none; /* Initially hidden */
 }
-
-/* Add responsive design and other specific styling as needed */

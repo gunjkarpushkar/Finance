@@ -1,4 +1,4 @@
-# #Contains Flask app and SQLAlchemy database object
+#Contains Flask app and SQLAlchemy database object
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
