@@ -30,8 +30,14 @@ function App() {
           </>
         ) : (
           <>
-            {/* <LandingPage /> */}
-            <LoginPage onLogin={handleLogin} />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/landing" element={<LandingPage />} />
+              <Route
+                path="/login"
+                element={<LoginPage onLogin={handleLogin} />}
+              />
+            </Routes>
           </>
         )}
       </div>
