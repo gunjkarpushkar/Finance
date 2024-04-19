@@ -5,6 +5,7 @@ import Navbar from "./components/navbar.js"; // Ensure the path is correct
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import StockPage from "./pages/StockPage.js";
 import Home from "./pages/Home.js";
+import LandingPage from "./pages/LandingPage.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,7 +29,16 @@ function App() {
             </Routes>
           </>
         ) : (
-          <LoginPage onLogin={handleLogin} />
+          <>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/landing" element={<LandingPage />} />
+              <Route
+                path="/login"
+                element={<LoginPage onLogin={handleLogin} />}
+              />
+            </Routes>
+          </>
         )}
       </div>
     </Router>
