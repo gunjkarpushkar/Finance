@@ -5,6 +5,7 @@ import FinancialDashboard from "../components/financialDashboard";
 import DataFetcher from "../components/PiechartDataFetch";
 import IncomeForm from "../components/Income";
 import PieChartDisplay from "../components/PiechartDisplay";
+import BarChartDisplay from "../components/BarChartDisplay";
 
 function Home() {
   const [transactionData, setTransactionData] = useState({});
@@ -15,6 +16,7 @@ function Home() {
       <FinancialDashboard />
         <DataFetcher onDataFetched={setTransactionData} />
         <PieChartDisplay data={transactionData} />
+        <BarChartDisplay/>
     </div>
   );
 }
