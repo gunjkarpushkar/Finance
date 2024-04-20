@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from config import app, db
-from models import Contact
+from models import Contact, Finances
 import os
 from werkzeug.utils import secure_filename
 import sqlite3
