@@ -9,7 +9,10 @@ import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
+app.config['JWT_SECRET_KEY'] = 'heyyy'
+jwt = JWTManager(app)
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -32,11 +35,11 @@ def upload_file():
 
     
 # updated create_contact code, which returns contact information from frontend
-@app.route('/create_contact', methods = ['POST'])
-def get_user_details():
-    contact = request.json.get('contact')
-    print("contact is:", contact)
-    return jsonify({"message": "Received", "contact": contact}), 200
+#@app.route('/create_contact', methods = ['POST'])
+#def get_user_details():
+#    contact = request.json.get('contact')
+#    print("contact is:", contact)
+#    return jsonify({"message": "Received", "contact": contact}), 200
 
 
 
@@ -96,7 +99,7 @@ def get_stock():
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
-    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
     
@@ -118,38 +121,47 @@ def getUserIncome():
 
    
 # Retrieve a contact
-@app.route("/contacts", methods=["GET"])
+@app.route("/get_contacts", methods=["GET"])
 def get_contacts():
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
 
+
+
+
+
 # Create a contact
 @app.route("/create_contact", methods=["POST"])
 def create_contact():
+
+    #testing
+    print("Received data:", request.json)  
+
+
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
     email = request.json.get("email")
     password = request.json.get("password")
 
 
-    if not first_name or not last_name or not email:
+    if not first_name or not last_name or not email or not password:
         return (
             jsonify({"message": "You must include a first name, last name, email, and password"}),
             400,
         )
 
     new_contact = Contact(first_name=first_name, last_name=last_name, email=email, password=password)
+    db.session.add(new_contact)
     try:
-        db.session.add(new_contact)
+       # db.session.add(new_contact)
         db.session.commit()
+        return jsonify({"message": "User created!"}), 201
     except Exception as e:
+        db.session.rollback()  # Roll back the session if commit fails
         return jsonify({"message": str(e)}), 400
 
-
-
-    return jsonify({"message": "User created!"}), 201
 
 
 # Update a contact
@@ -184,6 +196,28 @@ def delete_contact(user_id):
     db.session.commit()
 
     return jsonify({"message": "User deleted!"}), 200
+
+
+
+@app.route('/loginpage', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    contact = Contact.query.filter_by(email=email).first()
+    if contact and contact.password == password:
+        access_token = create_access_token(identity=email)
+        return jsonify(access_token=access_token), 200
+    
+    return jsonify({"msg": "Wrong email or password"}), 401
+
+
+
+@app.route('/stocks', methods=['GET'])
+@jwt_required()
+def stock_page():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
 
 
 

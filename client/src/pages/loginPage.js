@@ -1,13 +1,16 @@
-
 import React, { useState } from 'react';
-
 import axios from 'axios';
+import SignUpForm from './SignUpForm';
 
 
 const LoginPage = ({ onLogin }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     //const [contact, setContact] = useState("")
+
+    // NEW**
+    const [showSignUp, setShowSignUp] = useState(false);
+
 
   
     const handleSubmit = async (e) => {
@@ -16,24 +19,29 @@ const LoginPage = ({ onLogin }) => {
       if(isAuthenticated) {
         onLogin(true); // Inform App component about successful login
 
-
         // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
         // It's used when a user submits their login credentials. (user authentication)
         const updateContact = {
           email: email,
-
           password: password
         }
         const response = await axios.post('/contacts', { contact: updateContact });
         console.log(response.data)
         //localStorage.setItem('userInfo', credentialsJson);
-
-
       } else {
         alert('Login Failed');
       }
     };
-  
+
+    // NEW******
+    const handleNewButtonClick = () => {
+        setShowSignUp(true);
+    };
+
+    const handleSignUpClose = () => {
+        setShowSignUp(false);
+    };
+
     // Inline styles
     const formStyle = {
       display: 'flex',
@@ -58,18 +66,20 @@ const LoginPage = ({ onLogin }) => {
       fontWeight: 'bold',
       textAlign: "center",
     };
+
+    const mainStyle = {
+      backgroundColor: 'pink',
+  };
   
     return (
-      <main>
-        <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
+      <main style={mainStyle}>
+      <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
         <form onSubmit={handleSubmit} style={formStyle}>
           <input
             type="text"
-
             placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-
             style={inputStyle}
           />
           <input
@@ -79,8 +89,12 @@ const LoginPage = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
             style={inputStyle}
           />
-          <button type="submit" style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer' }}>Login</button>
+           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                    <button type="submit" style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer', marginRight: '10px' }}>Login</button>
+                    <button type="button" onClick={handleNewButtonClick} style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer' }}>Sign Up</button>
+                </div>
         </form>
+        {showSignUp && <SignUpForm onClose={handleSignUpClose} />}
       </main>
     );
 };

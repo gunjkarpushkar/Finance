@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const SignUpForm = ({ onClose }) => {
-    const [id, setID] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -17,13 +16,12 @@ const SignUpForm = ({ onClose }) => {
         // Send user details to backend for registration
 
         // Check if any input field is empty
-        if (!id || !firstName || !lastName || !email || !password) {
+        if (!firstName || !lastName || !email || !password) {
         setErrorMessage('Please fill out all fields.');
         return;
     }
 
         const newUser = {
-            id: id,
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -33,11 +31,11 @@ const SignUpForm = ({ onClose }) => {
             const response = await axios.post('/create_contact', newUser);
             console.log(response.data);
             setSuccessMessage('Account created successfully!');
-            //onClose();
+            onClose();
         } catch (error) {
             console.error('Error creating account:', error);
-           // setErrorMessage('Account creation failed. Please try again.');
-            //onClose();
+           setErrorMessage('Account creation failed. Please try again.');
+            onClose();
         }
     };
 
@@ -68,13 +66,6 @@ const SignUpForm = ({ onClose }) => {
                 <h2>Create an Account</h2>
                 <form onSubmit={handleSignUp} style={{formStyle, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                    <input
-                        type="text"
-                        placeholder="ID"
-                        value={id}
-                        onChange={(e) => setID(e.target.value)}
-                        style={inputStyle}
-                    />
                     <input
                         type="text"
                         placeholder="First Name"
