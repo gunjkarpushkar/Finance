@@ -16,10 +16,10 @@ function Navbar({ onLogout }) {
   };
 
   const navBarStyle = {
-    padding: "50px 0",
-    backgroundColor: "teal",
-    textAlign: "center",
-    borderRadius: "0.375rem",
+    padding: '50px 0', 
+    backgroundColor: '#4CAF50', 
+    textAlign: 'center',
+    borderRadius: '0.375rem',
   };
 
   return (
