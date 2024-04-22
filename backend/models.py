@@ -24,9 +24,9 @@ class Finances(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'), nullable=False)
     month = db.Column(db.String(2), nullable=False)
-    day = db.Column(db.Column(8), nullable=False)
+    day = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    transaction_type = db.Column(db.String(50), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
 
     #one to many (one contact linked to many finances)
     contact = db.relationship('Contact', backref=db.backref('finances', lazy=True))
@@ -38,5 +38,6 @@ class Finances(db.Model):
             "month": self.month,
             "day": self.day,
             "amount": self.amount,
-            "transaction_type": self.transaction_type,
+            "category": self.category,
         }
+

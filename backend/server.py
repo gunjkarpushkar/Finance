@@ -3,7 +3,7 @@ from config import app, db
 from models import Contact, Finances
 import os
 from werkzeug.utils import secure_filename
-import sqlite3
+#import sqlite3
 from datetime import date
 import yfinance as yf
 from prophet import Prophet
@@ -20,27 +20,53 @@ app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-@app.route('/upload', methods = ['POST'])
+#@app.route('/upload', methods = ['POST'])
+#def upload_file():
+#    if 'file' not in request.files:
+#        return 'No file part', 400
+#    file = request.files['file']
+#    if file.filename == '':
+#        return "No Selected file", 400
+#    if file:
+#        filename = secure_filename(file.filename)
+#        print("This is the file ", filename)
+#        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#        return "File uploaded successfully", 200
+    
+@app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         return 'No file part', 400
     file = request.files['file']
     if file.filename == '':
-        return "No Selected file", 400
+        return "No selected file", 400
     if file:
         filename = secure_filename(file.filename)
-        print("This is the file ", filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return "File uploaded successfully", 200
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        try:
+            # Read the CSV file
+            df = pd.read_csv(filepath)
+            # Insert each row into the Finances table
+            for index, row in df.iterrows():
+                new_entry = Finances(
+                    contact_id=row['contact_id'],
+                    month=row['month'],
+                    day=row['day'],
+                    amount=row['amount'],
+                    category=row['category']
+                )
+                db.session.add(new_entry)
+            db.session.commit()
+            return "Data uploaded and inserted successfully", 200
+        except Exception as e:
+            db.session.rollback()
+            return str(e), 500
+
+    return "File uploaded successfully", 200
+
 
     
-# updated create_contact code, which returns contact information from frontend
-#@app.route('/create_contact', methods = ['POST'])
-#def get_user_details():
-#    contact = request.json.get('contact')
-#    print("contact is:", contact)
-#    return jsonify({"message": "Received", "contact": contact}), 200
-
 
 
 
@@ -115,10 +141,6 @@ def getUserIncome():
     return jsonify({"status": "success", "message": "Income received"}), 200
     
 
-
-
-
-
    
 # Retrieve a contact
 @app.route("/get_contacts", methods=["GET"])
@@ -133,33 +155,26 @@ def get_contacts():
 
 
 # Create a contact
-@app.route("/create_contact", methods=["POST"])
+@app.route('/create_contact', methods=['POST'])
 def create_contact():
+    data = request.json
+    new_contact = Contact(
+        first_name=data['firstName'],
+        last_name=data['lastName'],
+        email=data['email'],
+        password=data['password']
+    )
 
-    #testing
-    print("Received data:", request.json)  
+    # Check if the email already exists
+    if Contact.query.filter_by(email=new_contact.email).first():
+        return jsonify({"message": "Email already exists"}), 400
 
-
-    first_name = request.json.get("firstName")
-    last_name = request.json.get("lastName")
-    email = request.json.get("email")
-    password = request.json.get("password")
-
-
-    if not first_name or not last_name or not email or not password:
-        return (
-            jsonify({"message": "You must include a first name, last name, email, and password"}),
-            400,
-        )
-
-    new_contact = Contact(first_name=first_name, last_name=last_name, email=email, password=password)
-    db.session.add(new_contact)
     try:
-       # db.session.add(new_contact)
+        db.session.add(new_contact)
         db.session.commit()
         return jsonify({"message": "User created!"}), 201
     except Exception as e:
-        db.session.rollback()  # Roll back the session if commit fails
+        db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
 
@@ -217,6 +232,13 @@ def login():
 def stock_page():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
+
+
+@app.route('/finances', methods=['GET'])
+def get_finances():
+    finances = Finances.query.all()
+    result = [{'id': finance.id, 'contact_id': finance.contact_id, 'month': finance.month, 'day': finance.day, 'amount': finance.amount, 'category': finance.category} for finance in finances]
+    return jsonify(result)
 
 
 

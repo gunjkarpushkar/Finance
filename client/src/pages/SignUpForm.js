@@ -30,12 +30,12 @@ const SignUpForm = ({ onClose }) => {
         try {
             const response = await axios.post('/create_contact', newUser);
             console.log(response.data);
-            setSuccessMessage('Account created successfully!');
+            setSuccessMessage('Account created');
             onClose();
         } catch (error) {
             console.error('Error creating account:', error);
-           setErrorMessage('Account creation failed. Please try again.');
-            onClose();
+            setErrorMessage('Account creation failed. Please try again.');
+            //onClose();
         }
     };
 
@@ -62,37 +62,38 @@ const SignUpForm = ({ onClose }) => {
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
         <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: '999', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '5px', width: '30%', height: '70%' }}>
+            <div style={{ position: "relative", backgroundColor: '#fff', padding: '20px', borderRadius: '5px', width: '30%', height: '70%' }}>
+                <div style={{ position: "absolute", top: "20px", right: "20px", cursor: "pointer", fontSize: "24px" }} onClick={onClose}>X</div>
                 <h2>Create an Account</h2>
-                <form onSubmit={handleSignUp} style={{formStyle, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                     {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     <input
                         type="text"
                         placeholder="First Name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        style={inputStyle}
+                        style={{ marginBottom: '10px', padding: '10px', border: '2px solid black', borderRadius: '5px', width: '20%', minWidth: '250px' }}
                     />
                     <input
                         type="text"
                         placeholder="Last Name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        style={inputStyle}
+                        style={{ marginBottom: '10px', padding: '10px', border: '2px solid black', borderRadius: '5px', width: '20%', minWidth: '250px' }}
                     />
                     <input
                         type="text"
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        style={inputStyle}
+                        style={{ marginBottom: '10px', padding: '10px', border: '2px solid black', borderRadius: '5px', width: '20%', minWidth: '250px' }}
                     />
                     <input
                         type="password"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={inputStyle}
+                        style={{ marginBottom: '10px', padding: '10px', border: '2px solid black', borderRadius: '5px', width: '20%', minWidth: '250px' }}
                     />
                     <button type="submit" style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer' }}>Sign Up</button>
                 </form>

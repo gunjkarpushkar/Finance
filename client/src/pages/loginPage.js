@@ -25,7 +25,7 @@ const LoginPage = ({ onLogin }) => {
           email: email,
           password: password
         }
-        const response = await axios.post('/contacts', { contact: updateContact });
+        const response = await axios.get('/contacts', { contact: updateContact });
         console.log(response.data)
         //localStorage.setItem('userInfo', credentialsJson);
       } else {
