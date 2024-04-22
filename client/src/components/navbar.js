@@ -13,7 +13,7 @@ function Navbar() {
 
   const navBarStyle = {
     padding: '50px 0', 
-    backgroundColor: 'teal', 
+    backgroundColor: '#4CAF50', 
     textAlign: 'center',
     borderRadius: '0.375rem',
   };
