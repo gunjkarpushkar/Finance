@@ -3,7 +3,7 @@
 
 ## Project Overview
 
-FinAdvisor leverages advanced AI and machine learning technologies to provide personalized financial advice tailored to individual user profiles. This application analyzes a person’s financial data such as expenses, savings, and income to offer customized recommendations for budgeting, saving, investing, and managing debt.
+Money Tree  leverages advanced AI and machine learning technologies to provide personalized financial advice tailored to individual user profiles. This application analyzes a person’s financial data such as expenses, savings, and income to offer customized recommendations for budgeting, saving, investing, and managing debt.
 
 ## Vision Statement
 
