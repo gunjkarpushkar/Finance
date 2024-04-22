@@ -95,18 +95,21 @@ function FinancialDashboard() {
                   accept=".pdf"
                   onChange={(e) => handleFileChange(index, e.target.files[0])}
                 />
-                <input
-                  type="date"
-                  placeholder="Start Date"
-                  value={line.startDate}
-                  onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
-                />
-                <input
-                  type="date"
-                  placeholder="End Date"
-                  value={line.endDate}
-                  onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
-                />
+                <div>
+                  <input
+                    type="date"
+                    placeholder="Start Date"
+                    value={line.startDate}
+                    onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    placeholder="End Date"
+                    value={line.endDate}
+                    onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
+                  />
+                </div>
+                <button class="button" onClick={() => handleFileUpload(index)}>Upload Data</button>
               </>
             )}
 
@@ -124,13 +127,13 @@ function FinancialDashboard() {
                   value={line.date}
                   onChange={(e) => handleFieldChange(index, 'date', e.target.value)}
                 />
+                <button class="button2" onClick={() => handleFileUpload(index)}>Upload Data</button>
               </>
             )}
             
-            <button onClick={() => handleFileUpload(index)}>Upload Data</button>
           </div>
         ))}
-        <button onClick={addUploadLine}>Add Another Document</button>
+        <button class="button" onClick={addUploadLine}>Add Another Document</button>
       </main>
       <footer>
         <p>&copy; 2024 Your Company Name</p>
