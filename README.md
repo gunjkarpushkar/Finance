@@ -9,11 +9,11 @@
 Money Tree  leverages advanced AI and machine learning technologies to provide personalized financial advice tailored to individual user profiles. This application analyzes a person’s financial data such as expenses, savings, and income to offer customized recommendations for budgeting, saving, investing, and managing debt.
 
 ## Team Members
-Ishan Aggarwal
-Leili Massoum Zadeh
-Nathaniel David Hedrick
-Nicholas Pelletier
-Trevor E Flick 
+- Ishan Aggarwal
+- Leili Massoum Zadeh
+- Nathaniel David Hedrick
+- Nicholas Pelletier
+- Trevor E Flick 
 
 ## Vision Statement
 
