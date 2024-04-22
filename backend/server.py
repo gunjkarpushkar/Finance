@@ -9,6 +9,14 @@ import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
+import time
+import subprocess
+from pdfminer.high_level import extract_text
+
+from PyPDF2 import PdfReader
+import re
+import fitz
+import csv
 
 
 # upload folder stuff
@@ -32,11 +40,11 @@ def upload_file():
 
     
 # updated create_contact code, which returns contact information from frontend
-@app.route('/create_contact', methods = ['POST'])
-def get_user_details():
-    contact = request.json.get('contact')
-    print("contact is:", contact)
-    return jsonify({"message": "Received", "contact": contact}), 200
+# @app.route('/create_contact', methods = ['POST'])
+# def get_user_details():
+#     contact = request.json.get('contact')
+#     print("contact is:", contact)
+#     return jsonify({"message": "Received", "contact": contact}), 200
 
 
 
@@ -96,7 +104,11 @@ def get_stock():
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
-    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    while not os.path.exists("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
+        print("Waiting for the csv file")
+        time.sleep(10)
+    
+    df = pd.read_csv("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
     
@@ -107,12 +119,152 @@ def getTransationData():
 
 def getUserIncome():
     data = request.get_json()
-    print("Income:", data['income'])
-    print("Period:", data['period'])
-    return jsonify({"status": "success", "message": "Income received"}), 200
+    annual_income = data['income']
+    period = data['period']
+
+    monthly_income = annual_income / 12 if period == 'yearly' else annual_income
+    return jsonify({"status": "success", "message": "Income received", "monthlyIncome": monthly_income}), 200
+
+
     
 
+@app.route("/final-submit", methods=["POST"])
+def createTheCSVFile():
+    dir = "/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    response = {}
+    for filename in os.listdir(dir):
+        if filename.lower().endswith(".pdf"):
+            filepath = os.path.join(dir, filename)
+            pdf_text = extractTextFromPDF(filepath)
+            #print(pdf_text)
+            if pdf_text:
+                datePattern = r'^(\d{2}/\d{2}/\d{2})'
+                dateMatches = re.findall(datePattern, pdf_text, re.MULTILINE)
+                pattern = r'\$(\d{1,3}(?:,\d{3})*\.\d{2})([A-Za-z /]+)'
+                matches = re.findall(pattern, pdf_text)
+                
+                if (len(matches) == 0):
+                    pattern = r'\$\s*(-?\d{1,3}(?:,\d{3})*\.\d{2})\s+([A-Za-z/ ]+)'
+                    matches = re.findall(pattern, pdf_text)
+                
+                addMatchesToCsvFile(filename, matches, dateMatches)
+            #     for amount, category in matches:
+            #         print(f"Amount: ${amount}, Category: {category.strip()}")
+            #     for dates in dateMatches:
+            #         print(dates)
+            # else:
+            #     print(f"No text extracted from {filename}")
+                response[filename] = {
+                    "amounts_categories": matches,
+                    "dates": dateMatches
+                }
+            else:
+                response[filename] = "No text extracted"
+                    
+    return jsonify(response)
 
+
+def addMatchesToCsvFile(filename, matches, dateMatches):
+    
+    dir = "/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    
+    # index funds ETFS, bonds, Crypto, 
+    
+    csvFilename = "transactions.csv"
+    csvFilePath = os.path.join(dir, csvFilename)
+    
+    writeHeader = not os.path.exists(csvFilePath)
+    with open(csvFilePath, "a", newline='') as file:
+        writer = csv.writer(file)
+        
+        
+        if writeHeader:
+           writer.writerow(['Month', "Date", "Amount", "Category"])
+        
+        # removing the pdf
+        filename = filename[0:len(filename)-4]
+        month = getMonth(filename)
+        for (amount, category), date in zip(matches, dateMatches):
+            #amount = float(amount)
+            if category != "Payments and Credits":
+                try:
+                    category = customizeCategory(category)
+                    amount = float(amount.replace(',', ''))  # Remove commas and convert to float
+                    writer.writerow([month, date, amount, category])
+                except ValueError:
+                    print(f"Skipping invalid amount: {amount}")
+            else:
+                continue
+            
+def customizeCategory(category):
+    category = category.strip()
+    
+    categories = {
+        "Travel/ Entertainment": "Travel/Entertainment",
+        "Supermarkets": "Supermarkets",
+        "Restaurants": "Restaurants",
+        "Merchandise": "Merchandise",
+        "Gasoline": "Gasoline",
+        "Home Improvement": "Home Improvement",
+        "Services": "Services"
+        
+    }
+    
+    for key, value in categories.items():
+        if category.startswith(key):
+            return value
+        
+    return category
+    
+    
+    
+            
+def getMonth(fileName):
+    # Jan 1, Feb 2, Mar 3, Apr 4, May 5, Jun 6, Jul 7, Aug 8, Sep 9, Oct 10, Nov 11, 
+    if fileName.startswith("Jan"):
+        return 1
+    elif fileName.startswith("Feb"):
+        return 2
+    elif fileName.startswith("Mar"):
+        return 3
+    elif fileName.startswith("Apr"):
+        return 4
+    elif fileName.startswith("May"):
+        return 5
+    elif fileName.startswith("Jun"):
+        return 6
+    elif fileName.startswith("Jul"):
+        return 7
+    elif fileName.startswith("Aug"):
+        return 8
+    elif fileName.startswith("Sep"):
+        return 9
+    elif fileName.startswith("Oct"):
+        return 10
+    elif fileName.startswith("Nov"):
+        return 11
+    else:
+        return 12
+        
+        
+
+def extractTextFromPDF(pdf_path):
+    # if the other hard way is not working, we have to use this function
+    
+    
+
+        
+    try:
+        reader = PdfReader(pdf_path) 
+        text = ""
+        for page in reader.pages:  
+            text += page.extract_text() 
+        return text
+    except Exception as e:
+        print(f"Failed to process {pdf_path}: {str(e)}")
+        return ""
 
 
 
