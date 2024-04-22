@@ -1,3 +1,6 @@
+![Contributors](https://img.shields.io/github/contributors/cis3296s24/03-ai-finance-assistant.svg)
+![Forks](https://img.shields.io/github/forks/cis3296s24/03-ai-finance-assistant.svg?style=social&label=Fork)
+![Issues](https://img.shields.io/github/issues/cis3296s24/03-ai-finance-assistant.svg)
 
 # Money Tree: Financial AI
 
