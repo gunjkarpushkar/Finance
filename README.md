@@ -78,7 +78,7 @@ provide personalized financial advice, budgeting tools, saving strategies, and d
 2. **Run the frontend**
    ```
    cd client
-   npm start
+   npm run start
    ```
 
 ## Contributing
