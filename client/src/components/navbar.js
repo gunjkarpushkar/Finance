@@ -15,6 +15,13 @@ function Navbar({ onLogout }) {
     onLogout();
   };
 
+  const navBarStyle = {
+    padding: "50px 0",
+    backgroundColor: "teal",
+    textAlign: "center",
+    borderRadius: "0.375rem",
+  };
+
   return (
     <>
       <style>
@@ -24,14 +31,8 @@ function Navbar({ onLogout }) {
           }
         `}
       </style>
-      <div
-        className="navbar"
-        style={{
-          padding: "50px 0",
-          backgroundColor: "black",
-          textAlign: "center",
-        }}
-      >
+      <nav className="navbar" style={navBarStyle}>
+        <h1 style={{ fontSize: "32px", color: "white" }}>MoneyTree</h1>
         <Link to="/home" style={linkStyle}>
           Home
         </Link>
@@ -46,7 +47,7 @@ function Navbar({ onLogout }) {
         <Link to="/stocks" style={linkStyle}>
           Stocks
         </Link>
-      </div>
+      </nav>
     </>
   );
 }
