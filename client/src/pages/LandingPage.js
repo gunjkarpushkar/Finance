@@ -15,7 +15,7 @@ function LandingPage() {
         </div>
         <div className="image-section">
           {/* In case of error replace  with your image path */}
-          <img src="/financepage-removebg.png" alt="Financial Analysis" />
+          <img src="./financepage-removebg.png" alt="Financial Analysis" />
         </div>
       </div>
       <div className="description">
