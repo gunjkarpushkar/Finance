@@ -3,9 +3,7 @@
 [![Issues](https://img.shields.io/github/issues/cis3296s24/03-ai-finance-assistant.svg)](https://github.com/cis3296s24/03-ai-finance-assistant/issues)
 
 
-<div align="center">
-    <img src="logo.png" alt="Logo" width="200" height="200">
-</div>
+<img src="logo.png" alt="Logo" width="200" height="200">'
 
 
 
