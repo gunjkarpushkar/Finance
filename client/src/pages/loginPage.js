@@ -22,6 +22,7 @@ const LoginPage = ({ onLogin }) => {
         onLogin(true); // Inform App component about successful login
 
 
+
         // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
         // It's used when a user submits their login credentials. (user authentication)
         const updateContact = {
@@ -47,6 +48,7 @@ const LoginPage = ({ onLogin }) => {
     const handleSignUpClose = () => {
       setShowSignUp(false);
     };
+
 
     // Inline styles
     const formStyle = {
@@ -106,6 +108,7 @@ const LoginPage = ({ onLogin }) => {
         {showSignUp && <SignUpForm onClose={handleSignUpClose} />}
       </main>
     );
+
 };
 
 // need a fetch in this file
