@@ -16,12 +16,16 @@ function App() {
     setIsLoggedIn(loginStatus);
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
   return (
     <Router>
       <div>
         {isLoggedIn ? (
           <>
-            <Navbar />
+            <Navbar onLogout={handleLogout} />
             <Routes>
               <Route path="/stocks" element={<StockPage />} />
               <Route path="/home" element={<Home />} />
