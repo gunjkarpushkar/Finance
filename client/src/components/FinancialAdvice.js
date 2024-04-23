@@ -1,85 +1,99 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from 'axios';
 import "./FinancialAdvice.css";
+
+
 function FinancialAdvice() {
-  const [userIncome, setUserIncome] = useState(0);
-  const [period, setPeriod] = useState("monthly");
-  const [income, setIncome] = useState(0);
-  const [transactions, setTransactions] = useState({});
-  const [monthlyAdvice, setMonthlyAdvice] = useState([]);
+    const [userIncome, setUserIncome] = useState(0);
+    const [period, setPeriod] = useState('monthly');
+    const [income, setIncome] = useState(0);
+    const [transactions, setTransactions] = useState({});
+    const [monthlyAdvice, setMonthlyAdvice] = useState([]);
+    const [predictions, setPredictions] = useState({});
 
-  useEffect(() => {
-    if (income > 0) {
-      const fetchTransactions = async () => {
-        try {
-          const { data } = await axios.get("/get_transaction_data");
-          console.log(data);
-          setTransactions(data);
-        } catch (error) {
-          console.error("Failed to fetch transactions:", error);
+
+    useEffect(() => {
+        if (income > 0) {
+            const fetchTransactions = async () => {
+                try {
+                    const { data } = await axios.get('/get_transaction_data');
+                    setTransactions(data);
+                } catch (error) {
+                    console.error('Failed to fetch transactions:', error);
+                }
+            };
+            fetchTransactions();
         }
-      };
-      fetchTransactions();
-    }
-  }, [income]);
+    }, [income]); // Fetch transactions whenever income is set
 
-  useEffect(() => {
-    if (income > 0) {
-      console.log("Enterinign if statement");
-      calculateBudget();
-    }
-  }, [income, transactions]);
+    useEffect(() => {
+        if (income > 0 && Object.keys(transactions).length) {
+            calculateBudget(); // Recalculate budget whenever income or transactions change
+        }
+    }, [income, transactions]);
 
-  const handleIncomeSubmit = () => {
-    const monthlyIncome = period === "yearly" ? userIncome / 12 : userIncome;
-    setIncome(monthlyIncome);
-  };
+    useEffect(() => {
+        const fetchPrediction = async () => {
+            try {
+                const { data } = await axios.get('/get_predicted_data');
+                console.log(data)
+                setPredictions(data);
+            } catch (error) {
+                console.error('Failed to fetch transactions:', error);
+            }
+        };
+        fetchPrediction();
+      }, []);
+        
 
-  const calculateBudget = () => {
-    console.log("Entering calulctae budget");
-    const needsCategories = ["Gasoline", "Education", "Insurance", "Services"];
-    const wantsCategories = [
-      "Merchandise",
-      "Restaurants",
-      "Travel/Entertainment",
-    ];
+    const handleIncomeSubmit = () => {
+        const monthlyIncome = period === 'yearly' ? userIncome / 12 : userIncome;
+        setIncome(monthlyIncome);
+    };
+
+    const calculateBudget = () => {
+        const needsCategories = ['Gasoline', 'Education', 'Services', 'Supermarkets']; // Added Supermarkets as it seems like a need
+    const wantsCategories = ['Merchandise', 'Restaurants', 'Travel/Entertainment'];
+
     const monthlyAdviceArray = [];
 
-    Object.keys(transactions).forEach((month) => {
-      let totalNeeds = 0;
-      let totalWants = 0;
+    Object.keys(transactions).forEach(month => {
+        let totalNeeds = 0;
+        let totalWants = 0;
 
-      transactions[month].forEach((transaction) => {
-        console.log(transaction);
-        if (needsCategories.includes(transaction.category)) {
-          totalNeeds += transaction.amount;
-        } else if (wantsCategories.includes(transaction.category)) {
-          totalWants += transaction.amount;
-        } else {
-          totalNeeds += transaction.amount;
-        }
-      });
+        // Process each transaction in the month
+        transactions[month].forEach(transaction => {
+            const amount = transaction.Amount;
+            const category = transaction.Category;
 
-      const monthlyIncome = income;
-      const budgetNeeds = monthlyIncome * 0.5;
-      const budgetWants = monthlyIncome * 0.3;
-      const investment = monthlyIncome * 0.2;
+            // Accumulate totals based on category
+            if (needsCategories.includes(category)) {
+                totalNeeds += amount;
+            } else if (wantsCategories.includes(category)) {
+                totalWants += amount;
+            } else {
+                totalNeeds += amount;
+            }
+        });
 
-      const needsAdvice = `For ${month}, needs spending was ${
-        totalNeeds <= budgetNeeds ? "under" : "over"
-      } budget by $${Math.abs(totalNeeds - budgetNeeds).toFixed(2)}.`;
-      const wantsAdvice = `For ${month}, wants spending was ${
-        totalWants <= budgetWants ? "under" : "over"
-      } budget by $${Math.abs(totalWants - budgetWants).toFixed(2)}.`;
+        // Calculate budgets based on the 50/30/20 rule
+        const budgetNeeds = income * 0.50;
+        const budgetWants = income * 0.30;
 
-      monthlyAdviceArray.push({ month, needsAdvice, wantsAdvice });
+        // Generate advice for each category
+        const needsAdvice = `For ${month}, totalNeeds = ${totalNeeds}. The user's needs spending was ${totalNeeds <= budgetNeeds ? 'under' : 'over'} budget by $${Math.abs(totalNeeds - budgetNeeds).toFixed(2)}.`;
+        const wantsAdvice = `For ${month}, totalWants was = ${totalWants}. The user's wants spending was ${totalWants <= budgetWants ? 'under' : 'over'} budget by $${Math.abs(totalWants - budgetWants).toFixed(2)}.`;
+        // Push the monthly advice into the array
+        monthlyAdviceArray.push({ month, needsAdvice, wantsAdvice });
     });
 
-    setMonthlyAdvice(monthlyAdviceArray);
-  };
+    // Update state with the newly calculated advice for all months
+        setMonthlyAdvice(monthlyAdviceArray);
+    };
 
-  return (
-    <div class="advicePage">
+    return (
+ 
+        <div class="advicePage">
       <header className="adviceHeader">
         <h1>Financial Advice</h1>
         <p>
@@ -98,7 +112,7 @@ function FinancialAdvice() {
 
         <p>
           <strong>20% of your income needs to go toward INVESTMENTS</strong>{" "}
-          STOCKS, BONDS, EFTS etc.
+          STOCKS, BONDS, ETFS etc.
         </p>
       </header>
       <div className="adviceForm">
@@ -123,18 +137,33 @@ function FinancialAdvice() {
           </button>
         </div>
       </div>
+      <div className="financial-summary">
+        <h2>Your ideal spending given your ${income} monthly salary should be:</h2>
+        <h2>NEEDS: ${income * 0.5}, WANTS: ${income * 0.3}, INVESTMENT: ${income * 0.2}</h2>
 
-      <h2>Following the 50/30/20 Investment Rule</h2>
-      <h2>This is your monthly income ${income.toFixed(2)}</h2>
-      {monthlyAdvice.map((advice, index) => (
-        <div key={index}>
-          <h4>{advice.month}</h4>
-          <p>{advice.needsAdvice}</p>
-          <p>{advice.wantsAdvice}</p>
+        {monthlyAdvice.map((advice, index) => (
+            <div className="monthly-advice" key={index}>
+            <h4>{advice.month}</h4>
+            <p>{advice.needsAdvice}</p>
+            <p>{advice.wantsAdvice}</p>
+            </div>
+        ))}
+
+        <div className="ml-model-output">
+            <h2>From our Machine Learning model, we have calculated your expenditure for the next month:</h2>
+            <h1>Predicted Transactions</h1>
+            <ul>
+            {Object.entries(predictions).map(([category, amount]) => (
+                <li key={category}>{category}: ${amount.toFixed(2)}</li>
+            ))}
+            </ul>
+            <h1>Head over to our stocks page to find what stocks to invest in</h1>
         </div>
-      ))}
+        </div>
     </div>
-  );
+    );
 }
+
+//            <h2> NEEDS: ${income * 0.5}, WANTS: ${income * 0.3} and INVESTMENT = ${income * 0.2}</h2>
 
 export default FinancialAdvice;

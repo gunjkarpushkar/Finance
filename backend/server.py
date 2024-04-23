@@ -1,23 +1,24 @@
 from flask import jsonify, request
 from config import app, db
-from models import Contact
+from models import Contact, Finances
 import os
 from werkzeug.utils import secure_filename
-import sqlite3
 from datetime import date
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import time
-import subprocess
 from pdfminer.high_level import extract_text
-
 from PyPDF2 import PdfReader
 import re
-import fitz
 import csv
+import statsmodels.api as sm
 
+
+app.config['JWT_SECRET_KEY'] = 'key'
+jwt = JWTManager(app)
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -27,26 +28,16 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/upload', methods = ['POST'])
 def upload_file():
-    if 'file' not in request.files:
-        return 'No file part', 400
-    file = request.files['file']
-    if file.filename == '':
-        return "No Selected file", 400
-    if file:
-        filename = secure_filename(file.filename)
-        print("This is the file ", filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return "File uploaded successfully", 200
-
-    
-# updated create_contact code, which returns contact information from frontend
-# @app.route('/create_contact', methods = ['POST'])
-# def get_user_details():
-#     contact = request.json.get('contact')
-#     print("contact is:", contact)
-#     return jsonify({"message": "Received", "contact": contact}), 200
-
-
+   if 'file' not in request.files:
+       return 'No file part', 400
+   file = request.files['file']
+   if file.filename == '':
+       return "No Selected file", 400
+   if file:
+       filename = secure_filename(file.filename)
+       print("This is the file ", filename)
+       file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+       return "File uploaded successfully", 200
 
 
 # def get_data():
@@ -116,7 +107,6 @@ def getTransationData():
 
 
 @app.route("/get_income", methods=["POST"])
-
 def getUserIncome():
     data = request.get_json()
     annual_income = data['income']
@@ -126,7 +116,6 @@ def getUserIncome():
     return jsonify({"status": "success", "message": "Income received", "monthlyIncome": monthly_income}), 200
 
 
-    
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
@@ -217,6 +206,46 @@ def customizeCategory(category):
             return value
         
     return category
+
+@app.route("/get_predicted_data", methods=["GET"])
+def getPredictedData():
+    df = pd.read_csv("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+
+    dummies = pd.get_dummies(df['Category'])
+    df = pd.concat([df, dummies], axis=1)
+
+    df.drop(['Date', 'Category', "Month"], axis=1, inplace=True)
+
+    # Here is the independent varable. So, X is the column Amount
+    X = df.drop('Amount', axis=1)
+    # Adding a constant term to the prediction
+    X = sm.add_constant(X) 
+
+    # Define the dependent variable
+    y = df['Amount']
+
+    # Fit the linear regression model
+    model = sm.OLS(y, X).fit()
+
+    # Creating a dictionary for all categories with default values of 0
+    catDict = {cat: 0 for cat in X.columns if cat != 'const'}
+    catDict['const'] = 1  # Add constant to the dictionary
+
+    # Dictionary to store predictions
+    predictions = {}
+
+    for category in catDict:
+        if category == 'const':
+            continue
+        catDict[category] = 1  # Activate current category
+        new_data = pd.DataFrame([catDict])  # Convert the dictionary to DataFrame for prediction
+        predicted_amount = model.predict(new_data)  # Predicting the amount
+        predictions[category] = predicted_amount.iloc[0]  # Store the prediction
+        catDict[category] = 0  # Reset the category to 0
+        
+    print(predictions)
+
+    return jsonify(predictions)
     
     
     
@@ -270,43 +299,47 @@ def extractTextFromPDF(pdf_path):
 
    
 # Retrieve a contact
-@app.route("/contacts", methods=["GET"])
+@app.route("/get_contacts", methods=["GET"])
 def get_contacts():
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
 
+
+
+
+
 # Create a contact
-@app.route("/create_contact", methods=["POST"])
+@app.route('/create_contact', methods=['POST'])
 def create_contact():
-    first_name = request.json.get("firstName")
-    last_name = request.json.get("lastName")
-    email = request.json.get("email")
-    password = request.json.get("password")
 
+    data = request.json
+    new_contact = Contact(
+        first_name=data['firstName'],
+        last_name=data['lastName'],
+        email=data['email'],
+        password=data['password']
+    )
 
-    if not first_name or not last_name or not email:
-        return (
-            jsonify({"message": "You must include a first name, last name, email, and password"}),
-            400,
-        )
+    # Check if the email already exists
+    if Contact.query.filter_by(email=new_contact.email).first():
+        return jsonify({"message": "Email already exists"}), 400
 
-    new_contact = Contact(first_name=first_name, last_name=last_name, email=email, password=password)
     try:
         db.session.add(new_contact)
         db.session.commit()
+        return jsonify({"message": "User created"}), 201
     except Exception as e:
+        db.session.rollback()
         return jsonify({"message": str(e)}), 400
 
-
-
-    return jsonify({"message": "User created!"}), 201
 
 
 # Update a contact
 @app.route("/update_contact/<int:user_id>", methods=["PATCH"])
 def update_contact(user_id):
+
     contact = Contact.query.get(user_id)
 
     if not contact:
@@ -336,6 +369,66 @@ def delete_contact(user_id):
     db.session.commit()
 
     return jsonify({"message": "User deleted!"}), 200
+
+
+
+@app.route('/loginpage', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    contact = Contact.query.filter_by(email=email).first()
+    if contact and contact.password == password:
+        access_token = create_access_token(identity=email)
+        return jsonify(access_token=access_token), 200
+    
+    return jsonify({"msg": "Wrong email or password"}), 401
+
+
+#User authentication test
+# @app.route('/stocks', methods=['GET'])
+# @jwt_required()
+# def stock_page():
+#     current_user = get_jwt_identity()
+#     return jsonify(logged_in_as=current_user), 200
+
+
+def csv_to_db(csv_path):
+    try:
+        df = pd.read_csv(csv_path)
+
+        #testing
+        print("DataFrame Columns:", df.columns) 
+        print(df.head()) 
+
+        for index, row in df.iterrows():
+            new_entry = Finances(
+               # contact_id=row['contact_id'],
+                month=row['Month'],
+                date=row['Date'],
+                amount=row['Amount'],
+                category=row['Category']
+            )
+            db.session.add(new_entry)
+        db.session.commit()
+        return "Data uploaded to DB"
+    except Exception as e:
+        db.session.rollback()
+        print(e)  
+        return str(e)
+
+@app.route('/process_finances', methods=['POST'])
+def process_finances():
+    csv_path = os.path.join(app.config['UPLOAD_FOLDER'], 'transactions.csv')
+    if os.path.exists(csv_path):
+        result = csv_to_db(csv_path)
+        if result == "Data uploaded and inserted successfully":
+            return jsonify({"message": result}), 200
+        else:
+            return jsonify({"error": result}), 500
+    else:
+        return jsonify({"error": "CSV file not found"}), 404
+    
+
 
 
 

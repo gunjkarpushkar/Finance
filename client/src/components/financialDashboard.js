@@ -155,7 +155,7 @@ function FinancialDashboard() {
         )}
       </main>
       <footer>
-        {/* <p>&copy; 2024 Your Company Name</p> */}
+        {/* <p>&copy; 2024 MoneyTree</p> */}
       </footer>
     </div>
   );
