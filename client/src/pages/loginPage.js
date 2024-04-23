@@ -92,8 +92,15 @@ const LoginPage = ({ onLogin }) => {
             style={inputStyle}
           />
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                    <button type="submit" style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer', marginRight: '10px' }}>Login</button>
-                    <button type="button" onClick={handleNewButtonClick} style={{ padding: '10px', border: '2px solid black', borderRadius: '5px', cursor: 'pointer' }}>Sign Up</button>
+                    <button type="submit" style={{ padding: '10px', 
+                                                  border: '2px solid black', 
+                                                  borderRadius: '5px', 
+                                                  cursor: 'pointer', 
+                                                  marginRight: '10px' }}>Login</button>
+                    <button type="button" onClick={handleNewButtonClick} style={{ padding: '10px', 
+                                                                                  border: '2px solid black', 
+                                                                                  borderRadius: '5px', 
+                                                                                  cursor: 'pointer' }}>Sign Up</button>
                 </div>
         </form>
         {showSignUp && <SignUpForm onClose={handleSignUpClose} />}
