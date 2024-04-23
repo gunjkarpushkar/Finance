@@ -39,7 +39,7 @@ const LoginPage = ({ onLogin }) => {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "100vh",
+    height: "44vh",
   };
 
   const inputStyle = {
@@ -61,6 +61,7 @@ const LoginPage = ({ onLogin }) => {
   return (
     <main>
       <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
+      <img src="./logo.png" alt="Logo" style={{ width: '200px', margin: '20px auto', display: 'block' }}/>
       <form onSubmit={handleSubmit} style={formStyle}>
         <input
           type="text"

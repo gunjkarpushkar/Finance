@@ -15,7 +15,7 @@ from pdfminer.high_level import extract_text
 
 from PyPDF2 import PdfReader
 import re
-import fitz
+#import fitz
 import csv
 
 
