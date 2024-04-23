@@ -3,7 +3,7 @@ import axios from 'axios';
 import Plot from 'react-plotly.js';
 
 function BarChartDisplay() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,10 +39,12 @@ function BarChartDisplay() {
     <div className="BarGraph">
       <header className="Bar-header">
         <h1> Transation Data </h1>
-        <Plot
-          data={data}
-          layout={{ width: 920, height: 540, title: 'Monthly Spending by Category', barmode: 'group' }}
-        />
+        {data && data.length > 0 ? (
+            <Plot
+            data={data}
+            layout={{ width: 920, height: 540, title: 'Monthly Spending by Category', barmode: 'group' }}
+          />
+        ) : null } {}
       </header>
     </div>
   );
