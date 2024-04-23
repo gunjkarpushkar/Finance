@@ -31,6 +31,12 @@ function Navbar() {
         <Link to="/home" style={linkStyle}>
           Home
         </Link>
+        <Link to="/Current Financial Information" style={linkStyle}>
+          Current Financial Information
+        </Link>
+        <Link to="/Financial Advice" style={linkStyle}>
+          Financial Advice
+        </Link>
         {/* <a href="#news" style={linkStyle}>News</a> */}
         {/* <a href="#contact" style={linkStyle}>Contact</a> */}
         {/* <a href="#about" style={linkStyle}>About</a> */}
