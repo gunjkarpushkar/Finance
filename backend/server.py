@@ -95,11 +95,11 @@ def get_stock():
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
-    while not os.path.exists("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
+    while not os.path.exists("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
         print("Waiting for the csv file")
         time.sleep(10)
     
-    df = pd.read_csv("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
     
@@ -119,7 +119,7 @@ def getUserIncome():
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
-    dir = "/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     response = {}
     for filename in os.listdir(dir):
         if filename.lower().endswith(".pdf"):
@@ -155,7 +155,7 @@ def createTheCSVFile():
 
 def addMatchesToCsvFile(filename, matches, dateMatches):
     
-    dir = "/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     if not os.path.exists(dir):
         os.makedirs(dir)
     

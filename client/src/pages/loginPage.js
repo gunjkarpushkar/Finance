@@ -32,6 +32,7 @@ const LoginPage = ({ onLogin }) => {
         // const response = await axios.post('/contacts', { contact: updateContact });
         // console.log(response)
         navigate("/home"); // Navigate to home after successful login
+
         //localStorage.setItem('userInfo', credentialsJson);
 
       } else {
