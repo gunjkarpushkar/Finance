@@ -7,38 +7,54 @@ import SignUpForm from './SignUpForm';
 const LoginPage = ({ onLogin }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    //const [contact, setContact] = useState("")
 
-    // NEW**
     const [showSignUp, setShowSignUp] = useState(false);
-
     const navigate = useNavigate();
 
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const isAuthenticated = true; // need to verify from the databse
-      if(isAuthenticated) {
-        onLogin(true); // Inform App component about successful login
 
+      try {
+        const response = await axios.post('/loginpage', {
+          email: email, // Send email
+          password: password // Send password
+      });
 
-
-        // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
-        // It's used when a user submits their login credentials. (user authentication)
-        // const updateContact = {
-        //   email: email,
-        //   password: password
-        // }
-        // const response = await axios.post('/contacts', { contact: updateContact });
-        // console.log(response)
-        navigate("/home"); // Navigate to home after successful login
-
-        //localStorage.setItem('userInfo', credentialsJson);
-
+      if (response.status === 200) {
+        onLogin(true);
+        navigate("/home");
+        console.log("Login successful");
       } else {
-        alert('Login Failed');
+        throw new Error("Login Failed");
       }
-    };
+    } catch (error) {
+      alert("Login failed: " + error.response.data.message);
+    }
+  };
+    
+    //   const isAuthenticated = true; // need to verify from the databse
+    //   if(isAuthenticated) {
+    //     onLogin(true); // Inform App component about successful login
+
+
+
+    //     // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
+    //     // It's used when a user submits their login credentials. (user authentication)
+    //     // const updateContact = {
+    //     //   email: email,
+    //     //   password: password
+    //     // }
+    //     // const response = await axios.post('/contacts', { contact: updateContact });
+    //     // console.log(response)
+    //    # navigate("/home"); // Navigate to home after successful login
+
+    //     //localStorage.setItem('userInfo', credentialsJson);
+
+    //   } else {
+    //     alert('Login Failed');
+    //   }
+    // };
   
     // NEW******
     const handleNewButtonClick = () => {

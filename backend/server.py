@@ -8,17 +8,14 @@ import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import time
+import subprocess
 from pdfminer.high_level import extract_text
 from PyPDF2 import PdfReader
 import re
+import fitz
 import csv
-import statsmodels.api as sm
 
-
-app.config['JWT_SECRET_KEY'] = 'key'
-jwt = JWTManager(app)
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -40,9 +37,6 @@ def upload_file():
        return "File uploaded successfully", 200
 
 
-# def get_data():
-    # data = {"message": "Hello from the Python backend!"}
-    # return jsonify(data)
 
 @app.route('/message', methods=['GET', 'POST'])
 def get_data():
@@ -206,46 +200,6 @@ def customizeCategory(category):
             return value
         
     return category
-
-@app.route("/get_predicted_data", methods=["GET"])
-def getPredictedData():
-    df = pd.read_csv("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
-
-    dummies = pd.get_dummies(df['Category'])
-    df = pd.concat([df, dummies], axis=1)
-
-    df.drop(['Date', 'Category', "Month"], axis=1, inplace=True)
-
-    # Here is the independent varable. So, X is the column Amount
-    X = df.drop('Amount', axis=1)
-    # Adding a constant term to the prediction
-    X = sm.add_constant(X) 
-
-    # Define the dependent variable
-    y = df['Amount']
-
-    # Fit the linear regression model
-    model = sm.OLS(y, X).fit()
-
-    # Creating a dictionary for all categories with default values of 0
-    catDict = {cat: 0 for cat in X.columns if cat != 'const'}
-    catDict['const'] = 1  # Add constant to the dictionary
-
-    # Dictionary to store predictions
-    predictions = {}
-
-    for category in catDict:
-        if category == 'const':
-            continue
-        catDict[category] = 1  # Activate current category
-        new_data = pd.DataFrame([catDict])  # Convert the dictionary to DataFrame for prediction
-        predicted_amount = model.predict(new_data)  # Predicting the amount
-        predictions[category] = predicted_amount.iloc[0]  # Store the prediction
-        catDict[category] = 0  # Reset the category to 0
-        
-    print(predictions)
-
-    return jsonify(predictions)
     
     
     
@@ -304,9 +258,6 @@ def get_contacts():
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
-
-
-
 
 
 
@@ -372,24 +323,6 @@ def delete_contact(user_id):
 
 
 
-@app.route('/loginpage', methods=['POST'])
-def login():
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-    contact = Contact.query.filter_by(email=email).first()
-    if contact and contact.password == password:
-        access_token = create_access_token(identity=email)
-        return jsonify(access_token=access_token), 200
-    
-    return jsonify({"msg": "Wrong email or password"}), 401
-
-
-#User authentication test
-# @app.route('/stocks', methods=['GET'])
-# @jwt_required()
-# def stock_page():
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), 200
 
 
 def csv_to_db(csv_path):
@@ -428,6 +361,20 @@ def process_finances():
     else:
         return jsonify({"error": "CSV file not found"}), 404
     
+
+
+@app.route('/loginpage', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    contact = Contact.query.filter_by(email=email).first()
+    
+    if contact and contact.password == password:
+        return jsonify({"message": "Login successful"}), 200
+    
+    return jsonify({"message": "Wrong email or password"}), 401
+
 
 
 
