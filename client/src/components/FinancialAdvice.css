@@ -63,3 +63,44 @@ button.submitIncome {
 button.submitIncome:hover {
   background-color: #0056b3;
 }
+
+.financial-summary {
+  background-color: #f4f9f4;
+  color: #333;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.financial-summary h2, .financial-summary h1 {
+  color: #2a5934; /* Dark green color */
+}
+
+.monthly-advice {
+  margin-bottom: 20px;
+  background-color: #e6f4ea; /* Light green color */
+  padding: 10px;
+  border-left: 5px solid #2a5934; /* Dark green border */
+}
+
+.ml-model-output {
+  margin-top: 30px;
+  background-color: #dff0d8; /* Lighter green color */
+  padding: 20px;
+  border-top: 3px solid #2a5934; /* Dark green top border */
+}
+
+.ml-model-output h1, .ml-model-output h2 {
+  color: #204529; /* Darker green for emphasis */
+}
+
+.ml-model-output ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ml-model-output li {
+  background-color: #e6f4ea; /* Light green background for list items */
+  margin: 5px 0;
+  padding: 5px 10px;
+}
+

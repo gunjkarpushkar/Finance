@@ -3,7 +3,6 @@ from config import app, db
 from models import Contact, Finances
 import os
 from werkzeug.utils import secure_filename
-import sqlite3
 from datetime import date
 import yfinance as yf
 from prophet import Prophet
@@ -11,12 +10,11 @@ from prophet.plot import plot_plotly
 import pandas as pd
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import time
-import subprocess
 from pdfminer.high_level import extract_text
 from PyPDF2 import PdfReader
 import re
-import fitz
 import csv
+import statsmodels.api as sm
 
 
 app.config['JWT_SECRET_KEY'] = 'key'
@@ -208,6 +206,46 @@ def customizeCategory(category):
             return value
         
     return category
+
+@app.route("/get_predicted_data", methods=["GET"])
+def getPredictedData():
+    df = pd.read_csv("/Users/ishanaggarwal/Library/CloudStorage/OneDrive-TempleUniversity/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+
+    dummies = pd.get_dummies(df['Category'])
+    df = pd.concat([df, dummies], axis=1)
+
+    df.drop(['Date', 'Category', "Month"], axis=1, inplace=True)
+
+    # Here is the independent varable. So, X is the column Amount
+    X = df.drop('Amount', axis=1)
+    # Adding a constant term to the prediction
+    X = sm.add_constant(X) 
+
+    # Define the dependent variable
+    y = df['Amount']
+
+    # Fit the linear regression model
+    model = sm.OLS(y, X).fit()
+
+    # Creating a dictionary for all categories with default values of 0
+    catDict = {cat: 0 for cat in X.columns if cat != 'const'}
+    catDict['const'] = 1  # Add constant to the dictionary
+
+    # Dictionary to store predictions
+    predictions = {}
+
+    for category in catDict:
+        if category == 'const':
+            continue
+        catDict[category] = 1  # Activate current category
+        new_data = pd.DataFrame([catDict])  # Convert the dictionary to DataFrame for prediction
+        predicted_amount = model.predict(new_data)  # Predicting the amount
+        predictions[category] = predicted_amount.iloc[0]  # Store the prediction
+        catDict[category] = 0  # Reset the category to 0
+        
+    print(predictions)
+
+    return jsonify(predictions)
     
     
     

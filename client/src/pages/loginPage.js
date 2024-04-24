@@ -25,14 +25,14 @@ const LoginPage = ({ onLogin }) => {
 
         // updateContact function is responsible for sending the user's email and password to the backend for authentication. 
         // It's used when a user submits their login credentials. (user authentication)
-        const updateContact = {
-          email: email,
-          password: password
-        }
-        const response = await axios.post('/contacts', { contact: updateContact });
-        console.log(response)
+        // const updateContact = {
+        //   email: email,
+        //   password: password
+        // }
+        // const response = await axios.post('/contacts', { contact: updateContact });
+        // console.log(response)
         navigate("/home"); // Navigate to home after successful login
-        console.log("Here");
+
         //localStorage.setItem('userInfo', credentialsJson);
 
       } else {
