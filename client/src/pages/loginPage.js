@@ -7,6 +7,8 @@ import SignUpForm from './SignUpForm';
 const LoginPage = ({ onLogin }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loginError, setLoginError] = useState(false); 
+
 
     const [showSignUp, setShowSignUp] = useState(false);
     const navigate = useNavigate();
@@ -25,11 +27,13 @@ const LoginPage = ({ onLogin }) => {
         onLogin(true);
         navigate("/home");
         console.log("Login successful");
+        setLoginError(false); 
       } else {
         throw new Error("Login Failed");
       }
     } catch (error) {
-      alert("Login failed: " + error.response.data.message);
+      alert("Login failed");
+      setLoginError(true);
     }
   };
     
@@ -56,8 +60,7 @@ const LoginPage = ({ onLogin }) => {
     //   }
     // };
   
-    // NEW******
-    const handleNewButtonClick = () => {
+    const signUpButton = () => {
       setShowSignUp(true);
     };
 
@@ -90,11 +93,18 @@ const LoginPage = ({ onLogin }) => {
       fontWeight: 'bold',
       textAlign: "center",
     };
+
+    const errorTextStyle = {
+      color: 'red',
+      textAlign: 'center',
+      marginBottom: '10px'
+    };
   
     return (
       <main>
         <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
         <form onSubmit={handleSubmit} style={formStyle}>
+          {loginError && <div style={errorTextStyle}>Invalid email or password. Please try again.</div>}
           <input
             type="text"
             placeholder="email"
@@ -115,7 +125,7 @@ const LoginPage = ({ onLogin }) => {
                                                   borderRadius: '5px', 
                                                   cursor: 'pointer', 
                                                   marginRight: '10px' }}>Login</button>
-                    <button type="button" onClick={handleNewButtonClick} style={{ padding: '10px', 
+                    <button type="button" onClick={signUpButton} style={{ padding: '10px', 
                                                                                   border: '2px solid black', 
                                                                                   borderRadius: '5px', 
                                                                                   cursor: 'pointer' }}>Sign Up</button>
