@@ -4,9 +4,7 @@ import './financialDashboard.css'; // Ensure this points to the actual CSS file 
 
 function FinancialDashboard() {
   const [documentLines, setDocumentLines] = useState([createNewLine('statement')]);
-  // we will keep track of the uploads done by the user.
-  const [successfulUploads, setSuccessfulUploads] = useState(0); 
-
+  const [successfulUploads, setSuccessfulUploads] = useState(0);
 
   function createNewLine(documentType) {
     return {
@@ -47,14 +45,12 @@ function FinancialDashboard() {
     }
 
     const formData = new FormData();
-    if (line.file) {
-      formData.append('file', line.file);
-    }
+    formData.append('file', line.file);
     formData.append('documentType', line.documentType);
-    if (line.startDate) formData.append('startDate', line.startDate);
-    if (line.endDate) formData.append('endDate', line.endDate);
-    if (line.amount) formData.append('amount', line.amount);
-    if (line.date) formData.append('date', line.date);
+    formData.append('startDate', line.startDate);
+    formData.append('endDate', line.endDate);
+    formData.append('amount', line.amount);
+    formData.append('date', line.date);
 
     try {
       const response = await axios.post('/upload', formData, {
@@ -64,12 +60,15 @@ function FinancialDashboard() {
       });
       console.log(response.data);
       alert("Data uploaded successfully");
-      // icrementing success count
-      setSuccessfulUploads(prevCount => prevCount + 1)
+      setSuccessfulUploads(prevCount => prevCount + 1);
     } catch (error) {
       console.error("Error uploading data: ", error);
       alert("Error uploading data");
     }
+  };
+
+  const handleRemoveLine = (index) => {
+    setDocumentLines(currentLines => currentLines.filter((_, i) => i !== index));
   };
 
   const handleFinalSubmit = async () => {
@@ -100,8 +99,6 @@ function FinancialDashboard() {
               onChange={(e) => handleDocumentTypeChange(index, e.target.value)}
             >
               <option value="statement">Statement</option>
-              <option value="income">Income</option>
-              <option value="cashSpending">Cash Spending</option>
             </select>
 
             {line.documentType === 'statement' && (
@@ -125,7 +122,7 @@ function FinancialDashboard() {
                     onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
                   />
                 </div>
-                <button class="button" onClick={() => handleFileUpload(index)}>Upload Data</button>
+                <button className="button" onClick={() => handleFileUpload(index)}>Upload Data</button>
               </>
             )}
 
@@ -143,19 +140,21 @@ function FinancialDashboard() {
                   value={line.date}
                   onChange={(e) => handleFieldChange(index, 'date', e.target.value)}
                 />
-                <button class="button2" onClick={() => handleFileUpload(index)}>Upload Data</button>
+                <button className="button2" onClick={() => handleFileUpload(index)}>Upload Data</button>
               </>
             )}
             
+            {/* Button to remove the current document line */}
+            <button className="button-remove" onClick={() => handleRemoveLine(index)}>Remove</button>
           </div>
         ))}
-        <button onClick={addUploadLine}>Add Another Document</button>
+        <button className="button" onClick={addUploadLine}>Add Another Document</button>
         {successfulUploads >= 5 && (
           <button onClick={handleFinalSubmit}>Submit All Documents</button>
         )}
       </main>
       <footer>
-        {/* <p>&copy; 2024 MoneyTree</p> */}
+        {/* <p>&copy; 2024 Money Tree</p> */}
       </footer>
     </div>
   );

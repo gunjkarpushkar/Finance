@@ -72,6 +72,30 @@ select {
     text-align: center;
 }
 
+.button-remove {
+  background-color: #FF6347; /* Tomato red? */
+  color: #FFFFFF;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 5px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: 46rem;
+    text-align: center;
+}
+
+.button-add {
+  background-color: #388E3C; /* Tomato red? */
+  color: #FFFFFF;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 5px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: 46rem;
+    text-align: center;
+}
+
 .button2{
     background-color: #388E3C;
     color: #FFFFFF;
@@ -103,6 +127,9 @@ footer {
     margin-left: 3rem;
     margin-right: 3rem;
 }
+
+
+
 
 /* Additional styles for showing and hiding form sections */
 #statementFields,
