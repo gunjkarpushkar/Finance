@@ -1,14 +1,53 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+/**
+ * SignUpForm provides a user interface for creating a new user account.
+ * It collects user information such as first name, last name, email, and password,
+ * and sends these details to the backend for registration. It also manages
+ * form validation and displays success or error messages.
+ *
+ * @component
+ * @param {Function} onClose - Function to close the modal form.
+ * @returns {React.Component} The SignUpForm component with form elements and logic.
+ */
 const SignUpForm = ({ onClose }) => {
+    /**
+     * State to store the first name input by the user.
+     * @type {string}
+     */
     const [firstName, setFirstName] = useState('');
+    /**
+     * State to store the last name input by the user.
+     * @type {string}
+     */
     const [lastName, setLastName] = useState('');
+    /**
+     * State to store the email input by the user.
+     * @type {string}
+     */
     const [email, setEmail] = useState('');
+    /**
+     * State to store the password input by the user.
+     * @type {string}
+     */
     const [password, setPassword] = useState('');
+    /**
+     * State to store the success message after successful registration.
+     * @type {string}
+     */
     const [successMessage, setSuccessMessage] = useState('');
+    /**
+     * State to store error messages related to form validation or registration failure.
+     * @type {string}
+     */
     const [errorMessage, setErrorMessage] = useState('');
-
+    /**
+     * Handles the form submission for signing up a new user. Validates input fields,
+     * constructs a user object, and attempts to register the user via a POST request.
+     * Displays success or error messages based on the outcome.
+     *
+     * @param {React.FormEvent} e - The form submission event.
+     */
     const handleSignUp = async (e) => {
 
         e.preventDefault();
