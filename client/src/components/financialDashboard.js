@@ -232,7 +232,7 @@ function FinancialDashboard() {
           Add Another Document
         </button>
         {successfulUploads >= 5 && (
-          <button onClick={handleFinalSubmit}>Submit All Documents</button>
+          <button className="button" onClick={handleFinalSubmit}>Submit All Documents</button>
         )}
       </main>
       <footer>{/* <p>&copy; 2024 Money Tree</p> */}</footer>

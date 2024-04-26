@@ -11,6 +11,12 @@ function FinancialAdvice() {
     const [monthlyAdvice, setMonthlyAdvice] = useState([]);
     const [predictions, setPredictions] = useState({});
 
+    const monthNames = {
+        '1': 'January', '2': 'February', '3': 'March', '4': 'April',
+        '5': 'May', '6': 'June', '7': 'July', '8': 'August',
+        '9': 'September', '10': 'October', '11': 'November', '12': 'December'
+    };
+
 
     useEffect(() => {
         if (income > 0) {
@@ -81,8 +87,8 @@ function FinancialAdvice() {
         const budgetWants = income * 0.30;
 
         // Generate advice for each category
-        const needsAdvice = `For ${month}, totalNeeds = ${totalNeeds}. The user's needs spending was ${totalNeeds <= budgetNeeds ? 'under' : 'over'} budget by $${Math.abs(totalNeeds - budgetNeeds).toFixed(2)}.`;
-        const wantsAdvice = `For ${month}, totalWants was = ${totalWants}. The user's wants spending was ${totalWants <= budgetWants ? 'under' : 'over'} budget by $${Math.abs(totalWants - budgetWants).toFixed(2)}.`;
+        const needsAdvice = `For ${monthNames[month]}, totalNeeds = ${totalNeeds.toFixed(2)}. The user's needs spending was ${totalNeeds <= budgetNeeds ? 'under' : 'over'} budget by $${Math.abs(totalNeeds - budgetNeeds).toFixed(2)}.`;
+        const wantsAdvice = `For ${monthNames[month]}, totalWants was = ${totalWants.toFixed(2)}. The user's wants spending was ${totalWants <= budgetWants ? 'under' : 'over'} budget by $${Math.abs(totalWants - budgetWants).toFixed(2)}.`;
         // Push the monthly advice into the array
         monthlyAdviceArray.push({ month, needsAdvice, wantsAdvice });
     });

@@ -17,6 +17,7 @@ import fitz
 import csv
 
 
+
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
 
@@ -52,6 +53,14 @@ def get_data():
 
 @app.route('/get_stock', methods=["GET"])
 def get_stock():
+    """
+    Retrieves stock data and makes prediction on future stock prices
+
+    :param a: a stock ticker
+    :param b: number of years of predicton
+    :return: JSON with graph of stock prediction, the current price, and the latest prediction
+    """
+
     START = "2015-01-01"
     TODAY = date.today().strftime("%Y-%m-%d")
 
@@ -89,11 +98,11 @@ def get_stock():
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
     
-    while not os.path.exists("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
+    while not os.path.exists("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
         print("Waiting for the csv file")
         time.sleep(10)
     
-    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
     
@@ -113,7 +122,7 @@ def getUserIncome():
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    dir = "/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     response = {}
     for filename in os.listdir(dir):
         if filename.lower().endswith(".pdf"):
@@ -149,7 +158,7 @@ def createTheCSVFile():
 
 def addMatchesToCsvFile(filename, matches, dateMatches):
     
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    dir = "/Users/nickpelletier/repos/softwareDesignClass/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     if not os.path.exists(dir):
         os.makedirs(dir)
     
@@ -255,6 +264,12 @@ def extractTextFromPDF(pdf_path):
 # Retrieve a contact
 @app.route("/get_contacts", methods=["GET"])
 def get_contacts():
+    """
+    Retrieve all contacts from database and return them as JSON.
+
+    :return: JSON object containing a list of contacts
+    :rtype: Response
+    """
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
@@ -264,7 +279,13 @@ def get_contacts():
 # Create a contact
 @app.route('/create_contact', methods=['POST'])
 def create_contact():
+    """
+    Create a new contact using JSON data and add it to the database.
+    Checks if the email already exists in the database to prevent duplicates.
 
+    :return: JSON response with either a success or error message and the appropriate status code
+    :rtype: Response
+    """
     data = request.json
     new_contact = Contact(
         first_name=data['firstName'],
@@ -290,6 +311,14 @@ def create_contact():
 # Update a contact
 @app.route("/update_contact/<int:user_id>", methods=["PATCH"])
 def update_contact(user_id):
+    """
+    Update an existing contact identified by user_id with data from JSON.
+
+    :param user_id: ID of the contact to be updated
+    :type user_id: int
+    :return: JSON with a success or error message 
+    :rtype: Response
+    """
 
     contact = Contact.query.get(user_id)
 
@@ -311,6 +340,14 @@ def update_contact(user_id):
 # Delete a contact
 @app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
 def delete_contact(user_id):
+    """
+    Delete a contact identified by user_id from  database.
+
+    :param user_id: ID 
+    :type user_id: int
+    :return: JSON response with a success or error message 
+    :rtype: Response
+    """
     contact = Contact.query.get(user_id)
 
     if not contact:
@@ -365,6 +402,13 @@ def process_finances():
 
 @app.route('/loginpage', methods=['POST'])
 def login():
+    """
+    Handle  login by verifying email and password with values in  database.
+    Returns a success message if user exists, otherwise returns an error.
+
+    :return: JSON response of the result of the login attempt.
+    :rtype: Response
+    """
     email = request.json.get('email', None)
     password = request.json.get('password', None)
 
