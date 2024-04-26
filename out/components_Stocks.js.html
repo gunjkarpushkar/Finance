@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Stocks.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Stocks.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import axios from "axios";
+import "../pages/stockPage.css";
+
+ /**
+ * Stocks is a React component that provides an interface for selecting a stock symbol,
+ * customizing forecast parameters like the number of years, and fetching forecast data
+ * using an API. The component allows for either selection from a predefined list of stocks
+ * or entering a custom stock symbol.
+ *
+ * @component
+ * @param {Function} onForecastData - Callback function to handle the forecast data received from the API.
+ * @param {Function} onError - Callback function to handle any errors that occur during the API call.
+ * @returns {React.Component} The Stocks component that includes a form for selecting stock and years for the forecast.
+ */
+
+const Stocks = ({ onForecastData, onError }) => {
+
+  /**
+   * State to store the selected stock symbol from the dropdown or custom input.
+   * @type {string}
+   */
+  const [selectedStock, setSelectedStock] = useState("AAPL");
+
+  /**
+   * State to store the custom stock symbol entered by the user if 'other' option is selected.
+   * @type {string}
+   */
+  const [customStock, setCustomStock] = useState("");
+
+  /**
+   * State to store the number of years for which the stock forecast is requested.
+   * @type {number}
+   */
+  const [years, setYears] = useState(2);
+
+  /**
+   * Handles the action triggered when the 'Get Forecast' button is clicked.
+   * It fetches stock forecast data from a specified endpoint and handles response via callbacks.
+   */
+
+  const handleForecast = async () => {
+    try {
+      const stockToFetch =
+        selectedStock === "other" ? customStock : selectedStock;
+      const response = await axios.get("http://127.0.0.1:5000/get_stock", {
+        params: {
+          stock: stockToFetch,
+          years: years,
+        },
+      });
+      onForecastData(response.data);
+    } catch (error) {
+      onError(error);
+      console.error("Error fetching forecast data:", error);
+    }
+  };
+
+  /**
+   * Updates the state with the custom stock ticker entered by the user.
+   * @param {React.ChangeEvent&lt;HTMLInputElement>} e - The event object for the input change.
+   */
+  const handleCustomStockChange = (e) => {
+    setCustomStock(e.target.value);
+  };
+
+  return (
+    &lt;div className="stock-form">
+      &lt;div className="form-group">
+        &lt;label htmlFor="stock-select">Select stock:&lt;/label>
+        &lt;select
+          id="stock-select"
+          value={selectedStock}
+          onChange={(e) => setSelectedStock(e.target.value)}
+        >
+          &lt;option value="GOOG">GOOG&lt;/option>
+          &lt;option value="AAPL">AAPL&lt;/option>
+          &lt;option value="MSFT">MSFT&lt;/option>
+          &lt;option value="GME">GME&lt;/option>
+          &lt;option value="other">Other&lt;/option>
+        &lt;/select>
+        {selectedStock === "other" &amp;&amp; (
+          &lt;input
+            type="text"
+            placeholder="Enter Stock Ticker"
+            className="custom-stock-input"
+            value={customStock}
+            onChange={handleCustomStockChange}
+          />
+        )}
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label htmlFor="years-input">Select years of prediction:&lt;/label>
+        &lt;input
+          id="years-input"
+          type="number"
+          value={years}
+          onChange={(e) => setYears(parseInt(e.target.value, 10))}
+          min="1"
+          max="5"
+          className="years-input"
+        />
+      &lt;/div>
+      &lt;button onClick={handleForecast} className="forecast-button">
+        Get Forecast
+      &lt;/button>
+    &lt;/div>
+  );
+};
+
+export default Stocks;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#BarChartDisplay">BarChartDisplay</a></li><li><a href="global.html#CurrentFinancialInformation">CurrentFinancialInformation</a></li><li><a href="global.html#DataFetcher">DataFetcher</a></li><li><a href="global.html#FinancialAdvice">FinancialAdvice</a></li><li><a href="global.html#FinancialDashboard">FinancialDashboard</a></li><li><a href="global.html#IncomeForm">IncomeForm</a></li><li><a href="global.html#LandingPage">LandingPage</a></li><li><a href="global.html#LoginPage">LoginPage</a></li><li><a href="global.html#MainContent">MainContent</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#PieChartDisplay">PieChartDisplay</a></li><li><a href="global.html#SignUpForm">SignUpForm</a></li><li><a href="global.html#SimplePieChart">SimplePieChart</a></li><li><a href="global.html#StockPage">StockPage</a></li><li><a href="global.html#StockPlot">StockPlot</a></li><li><a href="global.html#Stocks">Stocks</a></li><li><a href="global.html#reportWebVitals">reportWebVitals</a></li><li><a href="global.html#root">root</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Apr 26 2024 12:31:12 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

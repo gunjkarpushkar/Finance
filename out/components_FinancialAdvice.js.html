@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/FinancialAdvice.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/FinancialAdvice.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import axios from 'axios';
+import "./FinancialAdvice.css";
+
+/**
+ * FinancialAdvice is a React component that provides users with financial planning advice
+ * based on the 50/30/20 budgeting rule. It allows users to input their income, select the 
+ * income period, and calculates the ideal budget distribution for needs, wants, and investments.
+ * Additionally, it fetches and displays predicted financial data and advice for future transactions.
+ *
+ * @component
+ * @returns {React.Component} The FinancialAdvice component which renders inputs for user's income,
+ * displays the calculated budget allocation, and provides dynamic financial advice based on user data.
+ */
+function FinancialAdvice() {
+    const [userIncome, setUserIncome] = useState(0);
+    const [period, setPeriod] = useState('monthly');
+    const [income, setIncome] = useState(0);
+    const [transactions, setTransactions] = useState({});
+    const [monthlyAdvice, setMonthlyAdvice] = useState([]);
+    const [predictions, setPredictions] = useState({});
+
+    const monthNames = {
+        '1': 'January', '2': 'February', '3': 'March', '4': 'April',
+        '5': 'May', '6': 'June', '7': 'July', '8': 'August',
+        '9': 'September', '10': 'October', '11': 'November', '12': 'December'
+    };
+
+
+    useEffect(() => {
+        if (income > 0) {
+            const fetchTransactions = async () => {
+                try {
+                    const { data } = await axios.get('/get_transaction_data');
+                    setTransactions(data);
+                } catch (error) {
+                    console.error('Failed to fetch transactions:', error);
+                }
+            };
+            fetchTransactions();
+        }
+    }, [income]); // Fetch transactions whenever income is set
+
+    useEffect(() => {
+        if (income > 0 &amp;&amp; Object.keys(transactions).length) {
+            calculateBudget(); // Recalculate budget whenever income or transactions change
+        }
+    }, [income, transactions]);
+
+    useEffect(() => {
+        const fetchPrediction = async () => {
+            try {
+                const { data } = await axios.get('/get_predicted_data');
+                console.log(data)
+                setPredictions(data);
+            } catch (error) {
+                console.error('Failed to fetch transactions:', error);
+            }
+        };
+        fetchPrediction();
+      }, []);
+        
+
+    const handleIncomeSubmit = () => {
+        const monthlyIncome = period === 'yearly' ? userIncome / 12 : userIncome;
+        setIncome(monthlyIncome);
+    };
+
+    const calculateBudget = () => {
+        const needsCategories = ['Gasoline', 'Education', 'Services', 'Supermarkets']; // Added Supermarkets as it seems like a need
+    const wantsCategories = ['Merchandise', 'Restaurants', 'Travel/Entertainment'];
+
+    const monthlyAdviceArray = [];
+
+    Object.keys(transactions).forEach(month => {
+        let totalNeeds = 0;
+        let totalWants = 0;
+
+        // Process each transaction in the month
+        transactions[month].forEach(transaction => {
+            const amount = transaction.Amount;
+            const category = transaction.Category;
+
+            // Accumulate totals based on category
+            if (needsCategories.includes(category)) {
+                totalNeeds += amount;
+            } else if (wantsCategories.includes(category)) {
+                totalWants += amount;
+            } else {
+                totalNeeds += amount;
+            }
+        });
+
+        // Calculate budgets based on the 50/30/20 rule
+        const budgetNeeds = income * 0.50;
+        const budgetWants = income * 0.30;
+
+        // Generate advice for each category
+        const needsAdvice = `For ${monthNames[month]}, totalNeeds = ${totalNeeds.toFixed(2)}. The user's needs spending was ${totalNeeds &lt;= budgetNeeds ? 'under' : 'over'} budget by $${Math.abs(totalNeeds - budgetNeeds).toFixed(2)}.`;
+        const wantsAdvice = `For ${monthNames[month]}, totalWants was = ${totalWants.toFixed(2)}. The user's wants spending was ${totalWants &lt;= budgetWants ? 'under' : 'over'} budget by $${Math.abs(totalWants - budgetWants).toFixed(2)}.`;
+        // Push the monthly advice into the array
+        monthlyAdviceArray.push({ month, needsAdvice, wantsAdvice });
+    });
+
+    // Update state with the newly calculated advice for all months
+        setMonthlyAdvice(monthlyAdviceArray);
+    };
+
+    return (
+ 
+        &lt;div class="advicePage">
+      &lt;header className="adviceHeader">
+        &lt;h1>Financial Advice&lt;/h1>
+        &lt;p>
+          Our Financial Advice is based upon the
+          &lt;strong> 50 30 20 philospohy&lt;/strong>, which is a budget strategy to
+          empower financial growth
+        &lt;/p>
+        &lt;p>
+          &lt;strong>50% of your money goes towards NEEDS &lt;/strong>, this would
+          include Gasoline, Education, Insurance, etc
+        &lt;/p>
+        &lt;p>
+          &lt;strong>30% of your money goes towards WANTS &lt;/strong>, this would
+          include Merchandise, Restaurants, Travel/Entertainment, etc
+        &lt;/p>
+
+        &lt;p>
+          &lt;strong>20% of your income needs to go toward INVESTMENTS&lt;/strong>{" "}
+          STOCKS, BONDS, ETFS etc.
+        &lt;/p>
+      &lt;/header>
+      &lt;div className="adviceForm">
+        &lt;div className="adviceFormGroup">
+          &lt;label htmlFor="incomeEntry">Enter Income:&lt;/label>
+          &lt;input
+            type="number"
+            value={userIncome}
+            className="incomeInput"
+            onChange={(e) => setUserIncome(parseFloat(e.target.value))}
+            placeholder="Enter your income"
+          />
+        &lt;/div>
+        &lt;div className="adviceFormGroup">
+          &lt;label htmlFor="periodSelect">Select period:&lt;/label>
+          &lt;select value={period} onChange={(e) => setPeriod(e.target.value)}>
+            &lt;option value="monthly">Monthly&lt;/option>
+            &lt;option value="yearly">Yearly&lt;/option>
+          &lt;/select>
+          &lt;button className="submitIncome" onClick={handleIncomeSubmit}>
+            Submit Income
+          &lt;/button>
+        &lt;/div>
+      &lt;/div>
+      &lt;div className="financial-summary">
+        &lt;h2>Your ideal spending given your ${income} monthly salary should be:&lt;/h2>
+        &lt;h2>NEEDS: ${income * 0.5}, WANTS: ${income * 0.3}, INVESTMENT: ${income * 0.2}&lt;/h2>
+
+        {monthlyAdvice.map((advice, index) => (
+            &lt;div className="monthly-advice" key={index}>
+            &lt;h4>{advice.month}&lt;/h4>
+            &lt;p>{advice.needsAdvice}&lt;/p>
+            &lt;p>{advice.wantsAdvice}&lt;/p>
+            &lt;/div>
+        ))}
+
+        &lt;div className="ml-model-output">
+            &lt;h2>From our Machine Learning model, we have calculated your expenditure for the next month:&lt;/h2>
+            &lt;h1>Predicted Transactions&lt;/h1>
+            &lt;ul>
+            {Object.entries(predictions).map(([category, amount]) => (
+                &lt;li key={category}>{category}: ${amount.toFixed(2)}&lt;/li>
+            ))}
+            &lt;/ul>
+            &lt;h1>Head over to our stocks page to find what stocks to invest in&lt;/h1>
+        &lt;/div>
+        &lt;/div>
+    &lt;/div>
+    );
+}
+
+//            &lt;h2> NEEDS: ${income * 0.5}, WANTS: ${income * 0.3} and INVESTMENT = ${income * 0.2}&lt;/h2>
+
+export default FinancialAdvice;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#BarChartDisplay">BarChartDisplay</a></li><li><a href="global.html#CurrentFinancialInformation">CurrentFinancialInformation</a></li><li><a href="global.html#DataFetcher">DataFetcher</a></li><li><a href="global.html#FinancialAdvice">FinancialAdvice</a></li><li><a href="global.html#FinancialDashboard">FinancialDashboard</a></li><li><a href="global.html#IncomeForm">IncomeForm</a></li><li><a href="global.html#LandingPage">LandingPage</a></li><li><a href="global.html#LoginPage">LoginPage</a></li><li><a href="global.html#MainContent">MainContent</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#PieChartDisplay">PieChartDisplay</a></li><li><a href="global.html#SignUpForm">SignUpForm</a></li><li><a href="global.html#SimplePieChart">SimplePieChart</a></li><li><a href="global.html#StockPage">StockPage</a></li><li><a href="global.html#StockPlot">StockPlot</a></li><li><a href="global.html#Stocks">Stocks</a></li><li><a href="global.html#reportWebVitals">reportWebVitals</a></li><li><a href="global.html#root">root</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Apr 26 2024 12:31:12 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
