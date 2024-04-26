@@ -8,14 +8,17 @@ import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import pandas as pd
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import time
-import subprocess
 from pdfminer.high_level import extract_text
 from PyPDF2 import PdfReader
 import re
-import fitz
 import csv
+import statsmodels.api as sm
 
+
+app.config['JWT_SECRET_KEY'] = 'key'
+jwt = JWTManager(app)
 
 # upload folder stuff
 app.config['UPLOAD_FOLDER'] = 'UPLOAD_FOLDER'
@@ -25,21 +28,40 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/upload', methods = ['POST'])
 def upload_file():
-   if 'file' not in request.files:
+    """
+    gets the file from frontend and saves it in UPLOAD FOLDER. 
+    1) checks for condition if no file gets uploaded gives a 400 error. 
+    2) if file's name is an empty string returns a 400 error
+    3) If it is a proper file, then it it saves the file in the UPLOAD_FOLDER by creating a path.
+
+    :return: JSON and status of the result.
+    """
+    if 'file' not in request.files:
        return 'No file part', 400
-   file = request.files['file']
-   if file.filename == '':
+    file = request.files['file']
+    if file.filename == '':
        return "No Selected file", 400
-   if file:
+    if file:
        filename = secure_filename(file.filename)
        print("This is the file ", filename)
        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
        return "File uploaded successfully", 200
 
 
+# def get_data():
+    # data = {"message": "Hello from the Python backend!"}
+    # return jsonify(data)
 
 @app.route('/message', methods=['GET', 'POST'])
 def get_data():
+    """
+    Simple test function
+    1) If the request is GET then send a sample test 
+    2) If request is POST then retrevive the data 
+    :return: JSON dictionary and status of the result.
+    """
+  
+    
     if request.method == "GET":
         return jsonify({"message": ["Member 1", "Member2", "Member3"]}), 200
         #return {"message": "Member1, Member2, Member3"}
@@ -88,20 +110,38 @@ def get_stock():
 
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
+    """
+    1) This function waits until there is a transactions.csv file available. 
+    2) Once the file is available we retreive the data for each month and then sum up the distinct
+    category for each month
+    3) result is a dictionary with key as month and value as an array of each category and their 
+    summed amount for each month.
     
-    while not os.path.exists("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
+
+    :return: JSON dictionary with the status of the dictionary. 
+    """
+    
+    while not os.path.exists("Your Path to transactions.csv"):
         print("Waiting for the csv file")
         time.sleep(10)
     
-    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("Your Path to transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
+    #print(groupedElements)
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
-    
+    #print(result)
     return jsonify(result)
 
 
 @app.route("/get_income", methods=["POST"])
 def getUserIncome():
+    """
+    1) Gets the income from the user a POST request. 
+    
+
+    :return: JSON dict with success message and monthly_income from the user.
+    """
+    
     data = request.get_json()
     annual_income = data['income']
     period = data['period']
@@ -113,7 +153,17 @@ def getUserIncome():
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    """
+    1) This function loops through all the files in the UPLOAD_FOLDER.
+    2) Once there is a file it extracts text from the pdf. 
+    3) The pdf text then follows a regex pattern and we get the text we need from the PDF like dates, amount and category. 
+    4) Once there are matches found we push this data into a CSV file. 
+    
+    
+
+    :return: JSON message if the data retrevial was succesful with status
+    """
+    dir = "Your path to UPLOAD_FOLDER"
     response = {}
     for filename in os.listdir(dir):
         if filename.lower().endswith(".pdf"):
@@ -148,8 +198,19 @@ def createTheCSVFile():
 
 
 def addMatchesToCsvFile(filename, matches, dateMatches):
+    """
+    1) This function creates the CSV file
+    2) First it creates the transactions.csv in the UPLOAD_FOLDER if it does not exist.
+    3) Next it creates a header if it does not exist
+    4) Lastly it just appends the data from the regex pattern matches. 
     
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    :param a: The filename is important as we need to get the month data. 
+    :param b: This is the matches from the PDF file.
+    :param c: This is the date matches from the PDF file
+    :return: JSON dictionary with the status of the dictionary. 
+    """
+    
+    dir = "Your path to UPLOAD_FOLDER"
     if not os.path.exists(dir):
         os.makedirs(dir)
     
@@ -182,6 +243,11 @@ def addMatchesToCsvFile(filename, matches, dateMatches):
                 continue
             
 def customizeCategory(category):
+    """
+    Just changing the category in case of any external string added to the file. 
+    :param a: category, each category is tested to make sure we provide the most accurate category to the user.
+    :return: category which is the fixed string of the category
+    """
     category = category.strip()
     
     categories = {
@@ -200,11 +266,61 @@ def customizeCategory(category):
             return value
         
     return category
+
+@app.route("/get_predicted_data", methods=["GET"])
+def getPredictedData():
+    """
+    1) This function predicts user's transaction for the next month. 
+    2) It uses a linear regression ML model for the predicition. 
+    
+    :return: JSON dictionary of each category and the amount spend for that category
+    """
+    df = pd.read_csv("Your path to transactions.csv")
+
+    dummies = pd.get_dummies(df['Category'])
+    df = pd.concat([df, dummies], axis=1)
+
+    df.drop(['Date', 'Category', "Month"], axis=1, inplace=True)
+
+    # Here is the independent varable. So, X is the column Amount
+    X = df.drop('Amount', axis=1)
+    # Adding a constant term to the prediction
+    X = sm.add_constant(X) 
+
+    # Define the dependent variable
+    y = df['Amount']
+
+    # Fit the linear regression model
+    model = sm.OLS(y, X).fit()
+    # Creating a dictionary for all categories with default values of 0
+    catDict = {cat: 0 for cat in X.columns if cat != 'const'}
+    catDict['const'] = 1  # Add constant to the dictionary
+
+    # Dictionary to store predictions
+    predictions = {}
+
+    for category in catDict:
+        if category == 'const':
+            continue
+        catDict[category] = 1  
+        new_data = pd.DataFrame([catDict]) 
+        predicted_amount = model.predict(new_data)  # Predicting the amount
+        predictions[category] = predicted_amount.iloc[0]  # Storing the prediction
+        catDict[category] = 0 
+        
+    print(predictions)
+
+    return jsonify(predictions)
     
     
     
             
 def getMonth(fileName):
+    """
+    1) This function given the file name returns the month. 
+    
+    :return: int with the corresponding month.
+    """
     # Jan 1, Feb 2, Mar 3, Apr 4, May 5, Jun 6, Jul 7, Aug 8, Sep 9, Oct 10, Nov 11, 
     if fileName.startswith("Jan"):
         return 1
@@ -234,11 +350,14 @@ def getMonth(fileName):
         
 
 def extractTextFromPDF(pdf_path):
+    """
+    1) This function uses the PdfReader and reads the pdf data from each page of the file. 
+    
+    
+    :return: returning a string with all the text from the file
+    """
     # if the other hard way is not working, we have to use this function
     
-    
-
-        
     try:
         reader = PdfReader(pdf_path) 
         text = ""
@@ -258,6 +377,9 @@ def get_contacts():
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
+
+
+
 
 
 
@@ -323,6 +445,17 @@ def delete_contact(user_id):
 
 
 
+@app.route('/loginpage', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    contact = Contact.query.filter_by(email=email).first()
+    if contact and contact.password == password:
+        access_token = create_access_token(identity=email)
+        return jsonify(access_token=access_token), 200
+    
+    return jsonify({"msg": "Wrong email or password"}), 401
+
 
 
 def csv_to_db(csv_path):
@@ -361,20 +494,6 @@ def process_finances():
     else:
         return jsonify({"error": "CSV file not found"}), 404
     
-
-
-@app.route('/loginpage', methods=['POST'])
-def login():
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-
-    contact = Contact.query.filter_by(email=email).first()
-    
-    if contact and contact.password == password:
-        return jsonify({"message": "Login successful"}), 200
-    
-    return jsonify({"message": "Wrong email or password"}), 401
-
 
 
 
