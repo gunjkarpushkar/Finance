@@ -69,7 +69,26 @@ provide personalized financial advice, budgeting tools, saving strategies, and d
 
 ### Running the Application
 
+   Before starting the backend server, make sure to update the paths in `server.py` to match your system configuration. Open `server.py` located in the `backend` folder and update the paths as needed.
+
+   Update `transactions.csv` path
+   ```
+   while not os.path.exists("UPDATE_YOUR_PATH_TO_transactions.csv"):
+        print("Waiting for the csv file")
+        time.sleep(10)
+    
+    df = pd.read_csv("UPDATE_YOUR_PATH_TO_transactions.csv")
+    groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().
+   ```
+
+   Update `UPLOAD_FOLDER` path
+   ```
+   dir = "/UPDATE_YOUR_PATH_TO_UPLOAD_FOLDER"
+   if not os.path.exists(dir):
+        os.makedirs(dir)
+   ```
 1. **Start the backend server**
+
    ```
    cd backend
    python server.py

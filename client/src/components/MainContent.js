@@ -6,11 +6,21 @@ import React, {useState, useEffect} from "react";
 
 //useeffect: fetch the backend API on the first render. 
 
+/**
+ * MainContent is a React component that fetches and displays messages from a backend service.
+ * It initializes with an empty message state and updates this state with messages fetched
+ * from the backend upon the component's first mount. The component uses React's useEffect
+ * to handle the side effect of fetching data, ensuring it only occurs once after the initial render.
+ *
+ * @component
+ * @returns {React.Component} The MainContent component which displays messages fetched from the backend.
+ */
 function MainContent() {
   const [data, setData] = useState("")
-  // setData is the function which can be used to manipulate the state of the data variable 
-  // initally it is blank, but will set to backend data
-
+ /**
+   * State variable to store the messages fetched from the backend.
+   * @type {Array|string} 'data' can be either an array of messages or an initial empty string.
+   */
   useEffect(() => {
     fetch("/message").then(
       // useEffect is used to retreive the data from the backend

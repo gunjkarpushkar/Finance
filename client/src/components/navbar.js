@@ -1,6 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+/**
+ * Navbar is a React component that provides a navigation bar for the application.
+ * It includes links to various sections of the site, such as Home, Current Financial Information,
+ * Financial Advice, Stocks, and a Logout option. The Navbar utilizes React Router's `Link` component
+ * for navigation without a page refresh. It also has a custom logout function that is triggered on clicking Logout.
+ *
+ * @component
+ * @param {Function} onLogout - A callback function passed to the component to handle user logout.
+ * @returns {React.Component} A navigation bar with links to different pages and a logout functionality.
+ */
 function Navbar({ onLogout }) {
   // Inline style for the links
   const linkStyle = {
@@ -11,6 +21,9 @@ function Navbar({ onLogout }) {
     padding: "10px", // Adds padding to make each link bigger
   };
 
+  /**
+   * Calls the onLogout callback function to handle the logout logic.
+   */
   const handleLogout = () => {
     onLogout();
   };

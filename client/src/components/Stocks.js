@@ -2,10 +2,42 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../pages/stockPage.css";
 
+ /**
+ * Stocks is a React component that provides an interface for selecting a stock symbol,
+ * customizing forecast parameters like the number of years, and fetching forecast data
+ * using an API. The component allows for either selection from a predefined list of stocks
+ * or entering a custom stock symbol.
+ *
+ * @component
+ * @param {Function} onForecastData - Callback function to handle the forecast data received from the API.
+ * @param {Function} onError - Callback function to handle any errors that occur during the API call.
+ * @returns {React.Component} The Stocks component that includes a form for selecting stock and years for the forecast.
+ */
+
 const Stocks = ({ onForecastData, onError }) => {
+
+  /**
+   * State to store the selected stock symbol from the dropdown or custom input.
+   * @type {string}
+   */
   const [selectedStock, setSelectedStock] = useState("AAPL");
+
+  /**
+   * State to store the custom stock symbol entered by the user if 'other' option is selected.
+   * @type {string}
+   */
   const [customStock, setCustomStock] = useState("");
+
+  /**
+   * State to store the number of years for which the stock forecast is requested.
+   * @type {number}
+   */
   const [years, setYears] = useState(2);
+
+  /**
+   * Handles the action triggered when the 'Get Forecast' button is clicked.
+   * It fetches stock forecast data from a specified endpoint and handles response via callbacks.
+   */
 
   const handleForecast = async () => {
     try {
@@ -24,6 +56,10 @@ const Stocks = ({ onForecastData, onError }) => {
     }
   };
 
+  /**
+   * Updates the state with the custom stock ticker entered by the user.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The event object for the input change.
+   */
   const handleCustomStockChange = (e) => {
     setCustomStock(e.target.value);
   };
