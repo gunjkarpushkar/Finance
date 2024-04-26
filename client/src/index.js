@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+/**
+ * Root component responsible for rendering the entire application.
+ * Uses ReactDOM.createRoot to render the App component into the DOM.
+ */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

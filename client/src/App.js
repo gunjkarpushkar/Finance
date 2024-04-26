@@ -9,17 +9,41 @@ import LandingPage from "./pages/LandingPage.js";
 import CurrentFinancialInformation from "./components/CurrentFinancialInformation.js";
 import FinancialAdvice from "./components/FinancialAdvice.js";
 
+
+/**
+ * App is the root component of the application.
+ * It manages the login status and routes between different pages/components.
+ *
+ * @component
+ * @returns {JSX.Element} The root component of the application.
+ */
 function App() {
+
+  /**
+   * State to manage the login status.
+   * @type {[boolean, function]} isLoggedIn - A boolean indicating whether the user is logged in or not.
+   */
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  /**
+   * Handles the login status change.
+   * @param {boolean} loginStatus - The new login status.
+   */
   const handleLogin = (loginStatus) => {
     setIsLoggedIn(loginStatus);
   };
 
+  /**
+   * Handles the logout action.
+   */
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
 
+  /**
+   * Renders different components based on the login status and routes.
+   * @returns {JSX.Element} The root component of the application.
+   */
   return (
     <Router>
       <div>

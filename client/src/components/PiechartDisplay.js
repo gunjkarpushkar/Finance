@@ -1,7 +1,23 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
+/**
+ * PieChartDisplay is a React component that displays pie charts for monthly spending data.
+ * It takes in data in the form of an object where each key represents a month and its corresponding
+ * value is an array of objects containing spending information for different categories.
+ * Each pie chart represents the spending distribution for a specific month.
+ *
+ * @component
+ * @param {Object} data - The data object containing monthly spending information.
+ *                        It should have the following structure:
+ *                        {
+ *                          [month]: [{ Category: string, Amount: number }, ...],
+ *                          ...
+ *                        }
+ * @returns {JSX.Element} A React component that renders pie charts for monthly spending data.
+ */
 function PieChartDisplay({ data }) {
+    // Define month names for display purposes
     const monthNames = {
         '1': 'January', '2': 'February', '3': 'March', '4': 'April',
         '5': 'May', '6': 'June', '7': 'July', '8': 'August',

@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import "./FinancialAdvice.css";
 
-
+/**
+ * FinancialAdvice is a React component that provides users with financial planning advice
+ * based on the 50/30/20 budgeting rule. It allows users to input their income, select the 
+ * income period, and calculates the ideal budget distribution for needs, wants, and investments.
+ * Additionally, it fetches and displays predicted financial data and advice for future transactions.
+ *
+ * @component
+ * @returns {React.Component} The FinancialAdvice component which renders inputs for user's income,
+ * displays the calculated budget allocation, and provides dynamic financial advice based on user data.
+ */
 function FinancialAdvice() {
     const [userIncome, setUserIncome] = useState(0);
     const [period, setPeriod] = useState('monthly');
