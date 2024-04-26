@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 
 import "./LandingPage.css";
 
+/**
+ * LandingPage is a React component that serves as the initial point of entry to the Money Tree AI Finance application.
+ * It provides users with an introduction to the application and a quick way to navigate to the login or sign-up page.
+ * 
+ * @component
+ * @returns {React.Component} The LandingPage component displaying the main welcome message, 
+ * an invitation to log in or sign up, and a visual representation of financial analysis.
+ */   
+
 function LandingPage() {
   return (
     <>
