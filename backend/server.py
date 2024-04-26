@@ -255,6 +255,12 @@ def extractTextFromPDF(pdf_path):
 # Retrieve a contact
 @app.route("/get_contacts", methods=["GET"])
 def get_contacts():
+    """
+    Retrieve all contacts from database and return them as JSON.
+
+    :return: JSON object containing a list of contacts
+    :rtype: Response
+    """
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
@@ -264,7 +270,13 @@ def get_contacts():
 # Create a contact
 @app.route('/create_contact', methods=['POST'])
 def create_contact():
+    """
+    Create a new contact using JSON data and add it to the database.
+    Checks if the email already exists in the database to prevent duplicates.
 
+    :return: JSON response with either a success or error message and the appropriate status code
+    :rtype: Response
+    """
     data = request.json
     new_contact = Contact(
         first_name=data['firstName'],
@@ -290,6 +302,14 @@ def create_contact():
 # Update a contact
 @app.route("/update_contact/<int:user_id>", methods=["PATCH"])
 def update_contact(user_id):
+    """
+    Update an existing contact identified by user_id with data from JSON.
+
+    :param user_id: ID of the contact to be updated
+    :type user_id: int
+    :return: JSON with a success or error message 
+    :rtype: Response
+    """
 
     contact = Contact.query.get(user_id)
 
@@ -311,6 +331,14 @@ def update_contact(user_id):
 # Delete a contact
 @app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
 def delete_contact(user_id):
+    """
+    Delete a contact identified by user_id from  database.
+
+    :param user_id: ID 
+    :type user_id: int
+    :return: JSON response with a success or error message 
+    :rtype: Response
+    """
     contact = Contact.query.get(user_id)
 
     if not contact:
@@ -365,6 +393,13 @@ def process_finances():
 
 @app.route('/loginpage', methods=['POST'])
 def login():
+    """
+    Handle  login by verifying email and password with values in  database.
+    Returns a success message if user exists, otherwise returns an error.
+
+    :return: JSON response of the result of the login attempt.
+    :rtype: Response
+    """
     email = request.json.get('email', None)
     password = request.json.get('password', None)
 
