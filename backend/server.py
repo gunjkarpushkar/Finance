@@ -117,13 +117,22 @@ def get_stock():
 
 
 @app.route('/get_transaction_data', methods=["GET"])
-def getTransationData():
+def getTransactionData():
+    """
+    1) This function waits until there is a transactions.csv file available. 
+    2) Once the file is available we retreive the data for each month and then sum up the distinct
+    category for each month
+    3) result is a dictionary with key as month and value as an array of each category and their 
+    summed amount for each month.
     
-    while not os.path.exists("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
+
+    :return: JSON dictionary with the status of the dictionary. 
+    """
+    while not os.path.exists("Your path to transactions.csv in the UPLOAD_FOLDER"):
         print("Waiting for the csv file")
         time.sleep(10)
     
-    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
+    df = pd.read_csv("Your path to transactions.csv in the UPLOAD_FOLDER")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     #print(groupedElements)
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
@@ -136,7 +145,6 @@ def getUserIncome():
     """
     1) Gets the income from the user a POST request. 
     
-
     :return: JSON dict with success message and monthly_income from the user.
     """
     
@@ -151,7 +159,15 @@ def getUserIncome():
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    """
+    1) This function loops through all the files in the UPLOAD_FOLDER.
+    2) Once there is a file it extracts text from the pdf. 
+    3) The pdf text then follows a regex pattern and we get the text we need from the PDF like dates, amount and category. 
+    4) Once there are matches found we push this data into a CSV file. 
+    
+    :return: JSON message if the data retrevial was succesful with status
+    """
+    dir = "Your path to UPLOAD_FOLDER"
     response = {}
     for filename in os.listdir(dir):
         if filename.lower().endswith(".pdf"):
@@ -186,8 +202,18 @@ def createTheCSVFile():
 
 
 def addMatchesToCsvFile(filename, matches, dateMatches):
+    """
+    1) This function creates the CSV file
+    2) First it creates the transactions.csv in the UPLOAD_FOLDER if it does not exist.
+    3) Next it creates a header if it does not exist
+    4) Lastly it just appends the data from the regex pattern matches. 
     
-    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
+    :param a: The filename is important as we need to get the month data. 
+    :param b: This is the matches from the PDF file.
+    :param c: This is the date matches from the PDF file
+    :return: JSON dictionary with the status of the dictionary. 
+    """
+    dir = "Your path to UPLOAD_FOLDER"
     if not os.path.exists(dir):
         os.makedirs(dir)
     
