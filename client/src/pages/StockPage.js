@@ -2,13 +2,43 @@ import React, { useState, useEffect } from "react";
 import Stocks from "../components/Stocks";
 import StockPlot from "../components/StockPlot";
 import "./stockPage.css";
-
+/**
+ * StockPage is a React component that provides financial forecasting for stocks.
+ * It displays current stock prices, predicted future prices, and the potential profit.
+ * It also visualizes these forecasts using the StockPlot component.
+ *
+ * @component
+ * @returns {React.Component} Renders the stock market forecasting page with interactive data visualization.
+ */
 function StockPage() {
+  /**
+   * State to store forecast data for plotting.
+   * @type {Object|null}
+   */
   const [forecastData, setForecastData] = useState(null);
+  /**
+   * State to store error messages.
+   * @type {string|null}
+   */
   const [error, setError] = useState(null);
+  /**
+   * State to store the current price of the stock.
+   * @type {number|null}
+   */
   const [currentPrice, setCurrentPrice] = useState(null);
+  /**
+   * State to store the latest predicted price of the stock.
+   * @type {number|null}
+   */
   const [latestPrediction, setLatestPrediction] = useState(null);
+  /**
+   * State to store the difference between the current price and the latest predicted price.
+   * @type {number|null}
+   */
   const [difference, setDifference] = useState(null);
+  /**
+   * useEffect hook to calculate the difference once latestPrediction and currentPrice are available.
+   */
 
   useEffect(() => {
     if (latestPrediction !== null && currentPrice !== null) {
@@ -16,7 +46,12 @@ function StockPage() {
       setDifference(dif);
     }
   }, [latestPrediction, currentPrice]);
-
+  /**
+   * Handles the forecast data received from the Stocks component.
+   * Parses the forecast data and sets the state variables accordingly.
+   *
+   * @param {Object} data - The forecast data object containing graph data and current stock details.
+   */
   const handleForecastData = (data) => {
     const plotData = JSON.parse(data.graph);
     const currPrice = Number(data.current_price).toFixed(2);
@@ -28,7 +63,11 @@ function StockPage() {
     // Reset the error message upon every succcessful retrieval
     setError(null);
   };
-
+  /**
+   * Handles errors during the forecast data retrieval.
+   *
+   * @param {string} error - Error message to be displayed.
+   */
   const handleError = (error) => {
     setError("Invalid stock ticker");
   };
