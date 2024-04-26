@@ -3,6 +3,15 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import SignUpForm from './SignUpForm';
+/**
+ * LoginPage component provides the user interface for logging into the application.
+ * It allows users to enter their email and password to authenticate themselves.
+ * Additionally, it provides a link to a SignUpForm for new users to create an account.
+ *
+ * @component
+ * @param {Function} onLogin - Callback function to set the login state in the parent component.
+ * @returns {React.Component} A form for user login along with an option to open the sign-up form.
+ */
 
 const LoginPage = ({ onLogin }) => {
     const [email, setEmail] = useState('')
@@ -13,7 +22,12 @@ const LoginPage = ({ onLogin }) => {
     const [showSignUp, setShowSignUp] = useState(false);
     const navigate = useNavigate();
 
-
+    /**
+     * Handles the submission of the login form. It posts the user credentials to the server
+     * and handles the response by setting the login state or showing an error.
+     *
+     * @param {React.FormEvent} e - The event object for the form submission.
+     */
     const handleSubmit = async (e) => {
       e.preventDefault();
 
@@ -59,11 +73,15 @@ const LoginPage = ({ onLogin }) => {
     //     alert('Login Failed');
     //   }
     // };
-  
+    /**
+     * Opens the sign-up modal by setting showSignUp to true.
+     */
     const signUpButton = () => {
       setShowSignUp(true);
     };
-
+    /**
+     * Closes the sign-up modal by setting showSignUp to false.
+     */
     const handleSignUpClose = () => {
       setShowSignUp(false);
     };
