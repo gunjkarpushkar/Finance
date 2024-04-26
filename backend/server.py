@@ -14,7 +14,6 @@ from pdfminer.high_level import extract_text
 from PyPDF2 import PdfReader
 import re
 import csv
-import statsmodels.api as sm
 
 
 app.config['JWT_SECRET_KEY'] = 'key'
@@ -74,6 +73,14 @@ def get_data():
 
 @app.route('/get_stock', methods=["GET"])
 def get_stock():
+    """
+    Retrieves stock data and makes prediction on future stock prices
+
+    :param a: a stock ticker
+    :param b: number of years of predicton
+    :return: JSON with graph of stock prediction, the current price, and the latest prediction
+    """
+
     START = "2015-01-01"
     TODAY = date.today().strftime("%Y-%m-%d")
 
@@ -110,22 +117,12 @@ def get_stock():
 
 @app.route('/get_transaction_data', methods=["GET"])
 def getTransationData():
-    """
-    1) This function waits until there is a transactions.csv file available. 
-    2) Once the file is available we retreive the data for each month and then sum up the distinct
-    category for each month
-    3) result is a dictionary with key as month and value as an array of each category and their 
-    summed amount for each month.
     
-
-    :return: JSON dictionary with the status of the dictionary. 
-    """
-    
-    while not os.path.exists("Your Path to transactions.csv"):
+    while not os.path.exists("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv"):
         print("Waiting for the csv file")
         time.sleep(10)
     
-    df = pd.read_csv("Your Path to transactions.csv")
+    df = pd.read_csv("/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER/transactions.csv")
     groupedElements = df.groupby(["Month", "Category"])["Amount"].sum().unstack(fill_value=0).stack().reset_index(name="Amount")
     #print(groupedElements)
     result = groupedElements.groupby("Month").apply(lambda x: x[["Category", "Amount"]].to_dict('records')).to_dict()
@@ -153,17 +150,7 @@ def getUserIncome():
 
 @app.route("/final-submit", methods=["POST"])
 def createTheCSVFile():
-    """
-    1) This function loops through all the files in the UPLOAD_FOLDER.
-    2) Once there is a file it extracts text from the pdf. 
-    3) The pdf text then follows a regex pattern and we get the text we need from the PDF like dates, amount and category. 
-    4) Once there are matches found we push this data into a CSV file. 
-    
-    
-
-    :return: JSON message if the data retrevial was succesful with status
-    """
-    dir = "Your path to UPLOAD_FOLDER"
+    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     response = {}
     for filename in os.listdir(dir):
         if filename.lower().endswith(".pdf"):
@@ -198,19 +185,8 @@ def createTheCSVFile():
 
 
 def addMatchesToCsvFile(filename, matches, dateMatches):
-    """
-    1) This function creates the CSV file
-    2) First it creates the transactions.csv in the UPLOAD_FOLDER if it does not exist.
-    3) Next it creates a header if it does not exist
-    4) Lastly it just appends the data from the regex pattern matches. 
     
-    :param a: The filename is important as we need to get the month data. 
-    :param b: This is the matches from the PDF file.
-    :param c: This is the date matches from the PDF file
-    :return: JSON dictionary with the status of the dictionary. 
-    """
-    
-    dir = "Your path to UPLOAD_FOLDER"
+    dir = "/Users/trevorschool/Desktop/SDFINAL/03-ai-finance-assistant/backend/UPLOAD_FOLDER"
     if not os.path.exists(dir):
         os.makedirs(dir)
     
@@ -374,6 +350,12 @@ def extractTextFromPDF(pdf_path):
 # Retrieve a contact
 @app.route("/get_contacts", methods=["GET"])
 def get_contacts():
+    """
+    Retrieve all contacts from database and return them as JSON.
+
+    :return: JSON object containing a list of contacts
+    :rtype: Response
+    """
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
@@ -386,7 +368,13 @@ def get_contacts():
 # Create a contact
 @app.route('/create_contact', methods=['POST'])
 def create_contact():
+    """
+    Create a new contact using JSON data and add it to the database.
+    Checks if the email already exists in the database to prevent duplicates.
 
+    :return: JSON response with either a success or error message and the appropriate status code
+    :rtype: Response
+    """
     data = request.json
     new_contact = Contact(
         first_name=data['firstName'],
@@ -412,6 +400,14 @@ def create_contact():
 # Update a contact
 @app.route("/update_contact/<int:user_id>", methods=["PATCH"])
 def update_contact(user_id):
+    """
+    Update an existing contact identified by user_id with data from JSON.
+
+    :param user_id: ID of the contact to be updated
+    :type user_id: int
+    :return: JSON with a success or error message 
+    :rtype: Response
+    """
 
     contact = Contact.query.get(user_id)
 
@@ -433,6 +429,14 @@ def update_contact(user_id):
 # Delete a contact
 @app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
 def delete_contact(user_id):
+    """
+    Delete a contact identified by user_id from  database.
+
+    :param user_id: ID 
+    :type user_id: int
+    :return: JSON response with a success or error message 
+    :rtype: Response
+    """
     contact = Contact.query.get(user_id)
 
     if not contact:
@@ -494,6 +498,20 @@ def process_finances():
     else:
         return jsonify({"error": "CSV file not found"}), 404
     
+
+
+@app.route('/loginpage', methods=['POST'])
+def login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    contact = Contact.query.filter_by(email=email).first()
+    
+    if contact and contact.password == password:
+        return jsonify({"message": "Login successful"}), 200
+    
+    return jsonify({"message": "Wrong email or password"}), 401
+
 
 
 
