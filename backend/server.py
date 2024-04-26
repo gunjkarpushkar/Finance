@@ -12,6 +12,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 import time
 from pdfminer.high_level import extract_text
 from PyPDF2 import PdfReader
+import statsmodels.api as sm
 import re
 import csv
 
