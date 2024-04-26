@@ -452,6 +452,13 @@ def delete_contact(user_id):
 
 @app.route('/loginpage', methods=['POST'])
 def login():
+    """
+    Handle  login by verifying email and password with values in  database.
+    Returns a success message if user exists, otherwise returns an error.
+
+    :return: JSON response of the result of the login attempt.
+    :rtype: Response
+    """
     email = request.json.get('email', None)
     password = request.json.get('password', None)
     contact = Contact.query.filter_by(email=email).first()
