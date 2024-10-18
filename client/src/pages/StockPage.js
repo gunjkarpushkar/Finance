@@ -90,14 +90,14 @@ function StockPage() {
         <div className="price-info">
           <p>
             The current price for one share of this stock is:{" "}
-            <strong>${currentPrice}</strong>
+            <strong>₹{currentPrice}</strong>
           </p>
           <p>
             The expected price after this time period is:{" "}
-            <strong>${latestPrediction}</strong>
+            <strong>₹{latestPrediction}</strong>
           </p>
           <p>
-            You could possibly profit <strong>${difference}</strong> per share
+            You could possibly profit <strong>₹{difference}</strong> per share
             with this investment!
           </p>
         </div>

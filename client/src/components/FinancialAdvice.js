@@ -153,8 +153,8 @@ function FinancialAdvice() {
         </div>
       </div>
       <div className="financial-summary">
-        <h2>Your ideal spending given your ${income} monthly salary should be:</h2>
-        <h2>NEEDS: ${income * 0.5}, WANTS: ${income * 0.3}, INVESTMENT: ${income * 0.2}</h2>
+        <h2>Your ideal spending given your ₹{income} monthly salary should be:</h2>
+        <h2>NEEDS: ₹{income * 0.5}, WANTS: ₹{income * 0.3}, INVESTMENT: ₹{income * 0.2}</h2>
 
         {monthlyAdvice.map((advice, index) => (
             <div className="monthly-advice" key={index}>
