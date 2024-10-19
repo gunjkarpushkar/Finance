@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import "./LandingPage.css";
 
+
 /**
  * LandingPage is a React component that serves as the initial point of entry to the Money Tree AI Finance application.
  * It provides users with an introduction to the application and a quick way to navigate to the login or sign-up page.
@@ -17,7 +18,7 @@ function LandingPage() {
     <>
       <div className="content">
         <div className="text-section">
-          <h1>Money Tree AI Finance</h1>
+          <h1>MoneyMate</h1>
           <Link to="/login">
             <button className="button">Login / Sign up</button>
           </Link>
@@ -29,7 +30,7 @@ function LandingPage() {
       </div>
       <div className="description">
         <p>
-          Money Tree is designed to provide personalized financial advice
+        MoneyMate is designed to provide personalized financial advice
           through AI and machine learning technologies. It analyzes your
           financial data—such as expenses, income, and savings—to offer tailored
           recommendations for budgeting, saving, investing, and managing debt.

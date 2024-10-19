@@ -1,58 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Italianno&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Italianno&display=swap');
+
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #f5f5f5;
+    background: #ffffff;
+    overflow: hidden
   }
   
   .content {
     display: flex;
     align-items: center; /* Updated to center */
-    justify-content: space-between;
-    width: 90%;
-    max-width: 1200px;
-    margin-top: 5vh;
+    justify-content: space-around;
+    width: 100%;
+    /* max-width: 1200px; */
+    /* margin-top: 5vh; */
     margin-left: auto;
     margin-right: auto;
+    /* border: 1px solid black; */
+    height: 30vw;
   }
   
   .text-section {
-    flex-basis: 50%;
-    padding-right: 20px;
+    /* flex-basis: 50%; */
+    /* padding-right: 20px; */
+    /* border: 1px solid black; */
+    display: flex;
+    flex-direction: column;
+    height: 6vw;
+    justify-content: space-between;
+    font-family: "Italiana", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 10vw;
   }
   
   .text-section h1 {
     font-size: 2em;
-    color: #333;
-    margin-bottom: 0.5em;
+    color: #4a4949;
+    padding-left: 9.5vw;
+    /* margin-bottom: 0.5em; */
+    
   }
   
   .button {
-    padding: 10px 20px;
-    background: #4caf50;
-    color: white;
+    /* padding: 10px 20px; */
+    /* background: #51a854; */
+    background: #ffffff;
+    border: 2px solid black;
+    color: #4a4949;
     text-decoration: none;
-    border: none;
+    /* border: none; */
     border-radius: 5px;
+    /* font-weight: 600; */
+    height: 2.5vw;
+    font-size: small;
+    /* align-self: flex-start;
+    justify-self: start; */
+    /* padding-right: 5vw; */
+    margin-left: 11vw;
     cursor: pointer;
+    font-family: "Italiana", sans-serif;
+    font-weight: 800;
+    font-style: normal;
   }
+
+  .button:hover{
+    background-color: #0f100f;
+    color: #ffffff;
+  }
+
   
   .image-section {
-    flex-basis: 50%;
+    /* flex-basis: 50%; */
     text-align: right;
+    /* border: 1px solid black; */
+
+    /* align-items: end; */
   }
   
   .image-section img {
     max-width: 100%;
-    height: auto;
+    /* height: auto; */
+    height: 40vw;
   }
   
   .description {
-    text-align: center;
-    padding: 20px;
+    text-align: justify;
+    /* padding: 20px; */
     max-width: 80%;
     margin: 50px auto;
-    color: #666;
+    color: #4a4949;
     line-height: 1.6;
+   margin-top: 8vw;
+    font-family: "Italiana", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+    font-size: larger;
   }
   

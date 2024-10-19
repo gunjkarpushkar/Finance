@@ -20,7 +20,7 @@ app.config['JWT_SECRET_KEY'] = 'key'
 jwt = JWTManager(app)
 
 import os
-
+#hi
 # Configure the upload folder to be in the same directory as server.py
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'UPLOAD_FOLDER')
 
