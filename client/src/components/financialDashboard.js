@@ -112,6 +112,7 @@ function FinancialDashboard() {
               <>
                 <input
                   type="file"
+                  className="statement-1" 
                   accept=".pdf"
                   onChange={(e) => handleFileChange(index, e.target.files[0])}
                 />
