@@ -2,34 +2,12 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./financialDashboard.css"; // Ensure this points to the actual CSS file location
 import { useNavigate } from "react-router-dom";
-/**
- * `FinancialDashboard` is a React component for managing financial documents.
- * Users can add, upload, and remove financial document entries, which are managed as lines.
- * Each line allows users to input and submit various types of financial documents.
- * 
- * @component
- * @returns {React.Component} The FinancialDashboard component.
- */
+
 function FinancialDashboard() {
-   /**
-   * Stores the current state of all document lines.
-   * @type {Array<Object>}
-   */
-  const [documentLines, setDocumentLines] = useState([
-    createNewLine("statement"),
-  ]);
-  /**
-   * Tracks the number of successful uploads.
-   * @type {number}
-   */
+  const [documentLines, setDocumentLines] = useState([createNewLine("statement")]);
   const [successfulUploads, setSuccessfulUploads] = useState(0);
   const navigate = useNavigate();
 
-  /**
-   * Creates a new document line with default values.
-   * @param {string} documentType - The type of document for the new line (e.g., 'statement').
-   * @returns {Object} The new document line object with default properties.
-   */
   function createNewLine(documentType) {
     return {
       file: null,
@@ -47,23 +25,12 @@ function FinancialDashboard() {
     setDocumentLines(newLines);
   };
 
-/**
-   * Handles changes to fields within a document line.
-   * @param {number} index - The index of the document line in the state array.
-   * @param {string} field - The field within the document line to update.
-   * @param {any} value - The new value to set for the specified field.
-   */
   const handleFieldChange = (index, field, value) => {
     const newLines = [...documentLines];
     newLines[index][field] = value;
     setDocumentLines(newLines);
   };
 
-  /**
-   * Handles file selection changes, specifically for PDF files.
-   * @param {number} index - The index of the document line where the file is being uploaded.
-   * @param {File} file - The file selected by the user.
-   */
   const handleFileChange = (index, file) => {
     if (file.type !== "application/pdf") {
       alert("Please select a PDF file.");
@@ -72,11 +39,6 @@ function FinancialDashboard() {
     handleFieldChange(index, "file", file);
   };
 
-    /**
-   * Handles the uploading of a document file to the server.
-   * @param {number} index - The index of the document line from which data is being uploaded.
-   * @async
-   */
   const handleFileUpload = async (index) => {
     const line = documentLines[index];
     if (line.documentType === "statement" && !line.file) {
@@ -107,20 +69,12 @@ function FinancialDashboard() {
     }
   };
 
-  /**
-   * Removes a document line from the state based on its index.
-   * @param {number} index - The index of the document line to remove.
-   */
   const handleRemoveLine = (index) => {
     setDocumentLines((currentLines) =>
       currentLines.filter((_, i) => i !== index)
     );
   };
 
-   /**
-   * Handles the final submission of all documents, marking the process as complete.
-   * @async
-   */
   const handleFinalSubmit = async () => {
     try {
       const response = await axios.post("/final-submit", {
@@ -135,9 +89,6 @@ function FinancialDashboard() {
     }
   };
 
-  /**
-   * Adds a new document line to the state array for additional document uploads.
-   */
   const addUploadLine = () => {
     setDocumentLines([...documentLines, createNewLine("statement")]);
   };
@@ -219,7 +170,6 @@ function FinancialDashboard() {
               </>
             )}
 
-            {/* Button to remove the current document line */}
             <button
               className="button-remove"
               onClick={() => handleRemoveLine(index)}
@@ -235,7 +185,11 @@ function FinancialDashboard() {
           <button className="button" onClick={handleFinalSubmit}>Submit All Documents</button>
         )}
       </main>
-      <footer>{/* <p>&copy; 2024 Money Tree</p> */}</footer>
+      <footer>
+        <div class="text-center p-3">
+          &copy; MoneyMate.
+      </div>
+      </footer>
     </div>
   );
 }

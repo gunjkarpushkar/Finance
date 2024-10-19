@@ -7,7 +7,7 @@ body {
     margin: 0;
     padding: 0;
     background: #ffffff;
-    overflow: hidden
+    /* overflow: hidden */
   }
   
   .content {
@@ -48,9 +48,9 @@ body {
   .button {
     /* padding: 10px 20px; */
     /* background: #51a854; */
-    background: #ffffff;
+    background: #141414;
     border: 2px solid black;
-    color: #4a4949;
+    color: #fffafa;
     text-decoration: none;
     /* border: none; */
     border-radius: 5px;
@@ -68,8 +68,9 @@ body {
   }
 
   .button:hover{
-    background-color: #0f100f;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #070707;
+    border: 2px solid black;
   }
 
   

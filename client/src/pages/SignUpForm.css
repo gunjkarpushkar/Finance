@@ -1,0 +1,170 @@
+/* SignUpForm.css
+
+/* Modal background */
+/* .signup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } */
+  
+  /* Modal container */
+  /* .signup-container {
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 30%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+  } */
+  
+  /* Close button */
+  /* .signup-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    border: 1px solid black;
+  }
+   */
+  /* .signup-close h2{
+    border: 1px solid black;
+  } */
+  /* Input fields */
+  /* .signup-input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    width: 20%;
+    min-width: 250px;
+  } */
+  
+  /* Button */
+  /* .signup-button {
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+  } */
+  
+  /* Error and success messages */
+  /* .error-message {
+    color: red;
+  }
+  
+  .success-message {
+    color: green;
+  }
+    */
+
+    @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Italianno&display=swap');
+  /* Modal background */
+.signup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+  
+/* Modal container */
+.signup-container {
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 30%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* border: 2px solid black; */
+    font-family: "Italiana", sans-serif;
+
+}
+  
+/* Close button */
+.signup-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    /* border: 1px solid black; */
+}
+  
+.signup-close h2 {
+    border: 1px solid black;
+}
+
+.signup-container h2 {
+    margin-bottom: 2vw; /* Adjust the value as needed */
+    color: black;
+}
+  
+/* Input fields */
+.signup-input {
+    margin-bottom: 10px;
+    padding: 10px;
+    /* border: 2px solid black; */
+    border-radius: 5px;
+    width: 100%; /* Make input fields the same width */
+    /* max-width: 300px;  */
+    font-family: "Italiana", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+  
+/* Button */
+.signup-butt {
+    padding: 10px;
+    /* border: 2px solid black; */
+    border-radius: 5px;
+    cursor: pointer;
+    /* width: 100%; */
+    /* max-width: 300px; */
+    text-align: center;
+    margin-left: 11.5vw;
+   justify-content: center;
+   align-items: center;
+   align-self:center;
+   margin-top: 1vw;
+   background-color: black;
+   color: #fff;
+   font-family: "Italiana", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+.signup-butt:hover{
+    background-color: rgb(255, 255, 255);
+    color:black ;
+}
+  
+/* Error and success messages */
+.error-message {
+    color: red;
+}
+  
+.success-message {
+    color: green;
+}

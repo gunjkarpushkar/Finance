@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import SignUpForm from './SignUpForm';
+import "./loginpage.css";
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Italianno&display=swap" rel="stylesheet"></link>
+
+
 /**
  * LoginPage component provides the user interface for logging into the application.
  * It allows users to enter their email and password to authenticate themselves.
@@ -94,6 +98,7 @@ const LoginPage = ({ onLogin }) => {
       alignItems: 'center',
       justifyContent: 'center',
       height: '44vh', 
+      
     };
   
     const inputStyle = {
@@ -103,6 +108,7 @@ const LoginPage = ({ onLogin }) => {
       borderRadius: '5px',
       width: '20%', 
       minWidth: '250px', 
+      fontWeight: 'bolder',
     };
   
     const welcomeTextStyle = {
@@ -120,31 +126,32 @@ const LoginPage = ({ onLogin }) => {
   
     return (
       <main>
-        <div style={welcomeTextStyle}>Welcome to the AI Financial Assistant</div>
+        <div style={{...welcomeTextStyle,fontFamily: 'Italiana, serifRoboto, sans-serif' }}>Welcome to the AI Financial Assistant</div>
         <img src="./logo.png" alt="Logo" style={{ width: '200px', margin: '20px auto', display: 'block' }}/>
-        <form onSubmit={handleSubmit} style={formStyle}>
+        <form onSubmit={handleSubmit} style={{...formStyle, fontFamily:'Italiana, serif'}}>
           {loginError && <div style={errorTextStyle}>Invalid email or password. Please try again.</div>}
           <input
             type="text"
             placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle}
+            style={{...inputStyle,fontFamily: 'Italiana, serifRoboto, sans-serif' }}
           />
           <input
             type="password" 
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
+            style={{...inputStyle,fontFamily: 'Italiana, serifRoboto, sans-serif' }}
           />
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                    <button type="submit" style={{ padding: '10px', 
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px',fontFamily: 'Italiana, serifRoboto, sans-serif' }}>
+                    <button type="submit"  className='login-button' style={{ padding: '10px', 
                                                   border: '2px solid black', 
                                                   borderRadius: '5px', 
+                                                  
                                                   cursor: 'pointer', 
                                                   marginRight: '10px' }}>Login</button>
-                    <button type="button" onClick={signUpButton} style={{ padding: '10px', 
+                    <button type="button" className='signup-button ' onClick={signUpButton} style={{ padding: '10px', 
                                                                                   border: '2px solid black', 
                                                                                   borderRadius: '5px', 
                                                                                   cursor: 'pointer' }}>Sign Up</button>

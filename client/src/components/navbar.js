@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./navbar.css"; // Import the CSS file
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import the FontAwesomeIcon component
+import { faHome, faInfo, faChartLine, faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons"; 
 
 /**
  * Navbar is a React component that provides a navigation bar for the application.
@@ -12,15 +15,6 @@ import { Link } from "react-router-dom";
  * @returns {React.Component} A navigation bar with links to different pages and a logout functionality.
  */
 function Navbar({ onLogout }) {
-  // Inline style for the links
-  const linkStyle = {
-    color: "white", // Text color white
-    marginRight: "20px", // Space to the right of each link
-    fontSize: "24px", // Increases font size
-    textDecoration: "none", // Removes underline from links
-    padding: "10px", // Adds padding to make each link bigger
-  };
-
   /**
    * Calls the onLogout callback function to handle the logout logic.
    */
@@ -28,44 +22,33 @@ function Navbar({ onLogout }) {
     onLogout();
   };
 
-  const navBarStyle = {
-    padding: "50px 0",
-    backgroundColor: "#4CAF50",
-    textAlign: "center",
-    borderRadius: "0.375rem",
-  };
-
   return (
     <>
-      <style>
-        {`
-          .navbar a:hover {
-            color: blue !important; /* Ensures this rule has higher specificity, changes text to blue on hover */
-          }
-        `}
-      </style>
-      <nav className="navbar" style={navBarStyle}>
-        <h1 style={{ fontSize: "32px", color: "white" }}>MoneyTree</h1>
-        <Link to="/home" style={linkStyle}>
-          Home
+    
+      <nav className="navbar">
+        <div className="navbar-title-1">
+        <h1 className="navbar-title">MoneyMate</h1>
+        </div>
+        <div className="link">
+        <Link to="/home" className="navbar-link">
+        <FontAwesomeIcon icon={faHome} /> Home
         </Link>
-        <Link to="/Current Financial Information" style={linkStyle}>
-          Current Financial Information
+        <Link to="/Current Financial Information" className="navbar-link">
+        <FontAwesomeIcon icon={faInfo}/>Current Financial Information
         </Link>
-        <Link to="/Financial Advice" style={linkStyle}>
-          Financial Advice
+        <Link to="/Financial Advice" className="navbar-link">
+        <FontAwesomeIcon icon={faUser} /> Financial Advice
         </Link>
-        {/* <a href="#news" style={linkStyle}>News</a> */}
-        {/* <a href="#contact" style={linkStyle}>Contact</a> */}
-        {/* <a href="#about" style={linkStyle}>About</a> */}
-        <Link to="/stocks" style={linkStyle}>
-          Stocks
+        <Link to="/stocks" className="navbar-link">
+        <FontAwesomeIcon icon={faChartLine} />Stocks
         </Link>
-        <div onClick={handleLogout} style={{ display: "inline" }}>
-          <Link to="/landing" style={linkStyle}>
-            Logout
+        <div onClick={handleLogout} className="navbar-logout">
+          <Link to="/landing" className="navbar-link">
+          <FontAwesomeIcon icon={faSignOutAlt} /> Logout
           </Link>
         </div>
+        </div>
+
       </nav>
     </>
   );

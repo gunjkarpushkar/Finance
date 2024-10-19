@@ -1,0 +1,80 @@
+/* Styles for the navigation bar */
+
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Italianno&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    height: 100%;
+    width: 100%;
+
+    overflow-x: hidden;
+   
+}
+.navbar {
+    display: flex;
+    flex-direction: column;
+    /* padding: 50px 0; */
+    padding-top: 2vw;
+    background-color: rgb(227, 242, 253);
+    text-align: center;
+    border-radius: 0.375rem;
+    font-family: "Italiana", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    /* border-bottom: 1px solid black; */
+    /* height: 10vw; */
+    
+  }
+  .link{
+    display: flex;
+    align-items: center;
+    /* justify-content: space-around;  margin-bottom:2vw*/
+    gap: 4vw;
+    justify-content: center;
+    text-decoration: none;
+    margin-bottom:2vw
+    
+  }
+  /* Styling for the navbar title */
+  .navbar-title {
+    font-size: 32px;
+    color: rgb(0, 0, 0);
+    margin-bottom: 20px;
+  }
+  .navbar-link {
+    color: rgb(87, 85, 85);
+    font-size: 20px;
+    text-decoration: none;
+    /* padding: 10px; */
+    display: flex;
+       font-family:'Times New Roman', Times, serif;
+    font-weight: 400;
+    font-style: normal;
+    flex-direction: column; /* Stacks icon above the text */
+    align-items: center; /* Aligns items in the center */
+    /* width: 8vw; */
+  }
+
+  
+  /* Hover effect for the links */
+  .navbar-link:hover {
+    color: rgb(3, 3, 3) !important; /* Changes text to blue on hover */
+  }
+  
+  /* Styling for the logout section */
+  .navbar-logout {
+    display: inline;
+  }
+  
+  
+  .navbar-link svg {
+    font-size: 24px;
+    margin-bottom: 5px; /* Adds space between the icon and text */
+  }
+  
+  /* .navbar-link:hover {
+    color: blue !important;
+  } */
