@@ -109,6 +109,11 @@ function StockPage() {
           {forecastData && <StockPlot data={forecastData} />}
         </div>
       </main>
+      <footer>
+        <div class="text-center p-3">
+          &copy; MoneyMate.
+      </div>
+      </footer>
     </div>
   );
 }

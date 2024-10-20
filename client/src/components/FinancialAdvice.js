@@ -111,24 +111,26 @@ function FinancialAdvice() {
         <div class="advicePage">
       <header className="adviceHeader">
         <h1>Financial Advice</h1>
+        <div className="paragraph">
         <p>
           Our Financial Advice is based upon the
           <strong> 50 30 20 philospohy</strong>, which is a budget strategy to
           empower financial growth
-        </p>
-        <p>
+        <br></br>
+        
           <strong>50% of your money goes towards NEEDS </strong>, this would
           include Gasoline, Education, Insurance, etc
-        </p>
-        <p>
+        
+          <br></br>
           <strong>30% of your money goes towards WANTS </strong>, this would
           include Merchandise, Restaurants, Travel/Entertainment, etc
-        </p>
-
-        <p>
+        
+          <br></br>
+        
           <strong>20% of your income needs to go toward INVESTMENTS</strong>{" "}
           STOCKS, BONDS, ETFS etc.
         </p>
+        </div>
       </header>
       <div className="adviceForm">
         <div className="adviceFormGroup">
@@ -153,9 +155,11 @@ function FinancialAdvice() {
         </div>
       </div>
       <div className="financial-summary">
-        <h2>Your ideal spending given your ₹{income} monthly salary should be:</h2>
-        <h2>NEEDS: ₹{income * 0.5}, WANTS: ₹{income * 0.3}, INVESTMENT: ₹{income * 0.2}</h2>
+      <div className="financial-summary-1">
+        <h1>Your ideal spending given your ₹{income} monthly salary should be:</h1><br></br>
 
+        <h2>NEEDS: ₹{income * 0.5}, WANTS: ₹{income * 0.3}, INVESTMENT: ₹{income * 0.2}</h2>
+        </div>
         {monthlyAdvice.map((advice, index) => (
             <div className="monthly-advice" key={index}>
             <h4>{advice.month}</h4>
@@ -165,16 +169,22 @@ function FinancialAdvice() {
         ))}
 
         <div className="ml-model-output">
-            <h2>From our Machine Learning model, we have calculated your expenditure for the next month:</h2>
-            <h1>Predicted Transactions</h1>
+            <h1>From our Machine Learning model, we have calculated your expenditure for the next month:</h1><br></br>
+            <h2>Predicted Transactions</h2>
             <ul>
             {Object.entries(predictions).map(([category, amount]) => (
                 <li key={category}>{category}: ${amount.toFixed(2)}</li>
             ))}
             </ul>
-            <h1>Head over to our stocks page to find what stocks to invest in</h1>
+            <h2>Head over to our stocks page to find what stocks to invest in</h2>
         </div>
         </div>
+        <footer>
+        <div class="text-center p-3">
+          &copy; MoneyMate.
+      </div>
+      </footer>
+    
     </div>
     );
 }

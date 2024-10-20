@@ -94,7 +94,7 @@ function FinancialDashboard() {
   };
 
   return (
-    <div>
+    <div className="upper">
       <header>
         <h1>Upload Your Financial Document</h1>
       </header>
@@ -110,12 +110,12 @@ function FinancialDashboard() {
 
             {line.documentType === "statement" && (
               <>
-                <input
-                  type="file"
-                  className="statement-1" 
-                  accept=".pdf"
-                  onChange={(e) => handleFileChange(index, e.target.files[0])}
-                />
+              <input
+               type="file"
+              className="statement-1" 
+                 accept=".pdf"
+                 onChange={(e) => handleFileChange(index, e.target.files[0])}
+/>
                 <div>
                   <input
                     type="date"
@@ -135,7 +135,7 @@ function FinancialDashboard() {
                   />
                 </div>
                 <button
-                  className="button"
+                  className="butt"
                   onClick={() => handleFileUpload(index)}
                 >
                   Upload Data
@@ -163,7 +163,7 @@ function FinancialDashboard() {
                   }
                 />
                 <button
-                  className="button2"
+                  className="butt2"
                   onClick={() => handleFileUpload(index)}
                 >
                   Upload Data
@@ -179,11 +179,11 @@ function FinancialDashboard() {
             </button>
           </div>
         ))}
-        <button className="button" onClick={addUploadLine}>
+        <button className="butt-add" onClick={addUploadLine}>
           Add Another Document
         </button>
         {successfulUploads >= 5 && (
-          <button className="button" onClick={handleFinalSubmit}>Submit All Documents</button>
+          <button className="butt-add" onClick={handleFinalSubmit}>Submit All Documents</button>
         )}
       </main>
       <footer>

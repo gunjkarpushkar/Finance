@@ -1,6 +1,8 @@
 .stock-page {
   font-family: "Arial", sans-serif;
-  margin: 20px;
+  /* margin: 20px; */
+  display: flex;
+  flex-direction: column;
 }
 
 .plot-container {
@@ -11,9 +13,16 @@
   align-items: center;
 }
 .header {
-  background-color: #f2f4f8;
+  background-color: rgb(227, 242, 253);
   padding: 30px;
   border-radius: 8px;
+  margin-right: 12vw;
+  display: flex;
+  flex-direction:column;
+  /* border: 1px solid black; */
+  margin-left: 11vw;
+  align-items: flex-start;
+  margin-top: 4vw;
 }
 
 .header h1 {
@@ -23,8 +32,17 @@
 
 .header p {
   color: #666;
-  font-size: 16px;
-  font-style: italic;
+  font-size: 18px;
+  font-family:'Times New Roman', Times, serif;
+  /* margin: 16px; font-height:2vw*/
+  line-height: 2vw;
+  align-items: justify;
+  font-weight:500;
+  color: #666;
+  font-size: 18px;
+  text-align: justify;
+  font-weight: 500;
+  margin-top: 1vw;
 }
 
 .error-message {
@@ -33,15 +51,26 @@
 }
 
 .price-info {
-  background-color: #e0eafd;
+  font-size: 1vw;
+  margin-top: 30px;
+  /* background-color:   #d2f7fc;  */
+  padding: 20px;
+  /* border-top: 3px solid #a8deef;  */
+  color: rgb(80, 75, 75);
+   background-color: rgb(227, 242, 253);
   padding: 15px;
-  margin-top: 20px;
+  margin-top: 4vw;
   border-radius: 8px;
   font-size: 18px;
+  margin-left: 11vw;
+  margin-right: 12vw;
+  text-align: justify;
+  align-items: flex-start;
 }
 
 .price-info p {
   margin: 5px 0;
+  line-height: 2vw;
 }
 
 .plot-container {
@@ -67,10 +96,12 @@
 
 .stock-form {
   background-color: #f9f9f9;
-  padding: 20px;
+  padding: 2vw;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  margin-right:12vw;
+  margin-left: 11vw;
 }
 
 .form-group {
@@ -100,7 +131,7 @@ input[type="number"].years-input {
 }
 
 button.forecast-button {
-  background-color: #007bff;
+  background-color: #060606;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -108,8 +139,29 @@ button.forecast-button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+  border:2px solid black ;
+  margin-top:2vw
 }
 
 button.forecast-button:hover {
-  background-color: #0056b3;
+  background-color: #ffffff;
+  color: rgb(20, 19, 19);
+  border:2px solid black 
+}
+/* border:2px solid black margin-top:2vw*/
+footer {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgb(5, 5, 5);
+  text-align: center;
+  padding: 1vw 0;
+  width: 100%;
+  position: relative; 
+  /* Remove absolute positioning */
+    font-size: larger;
+    font-family:'Times New Roman', Times, serif;
+    font-weight: 400;
+  margin-top: 2vw;
+  margin-bottom: 0;
+  font-style: normal;
+    /* bottom: 0; */
 }

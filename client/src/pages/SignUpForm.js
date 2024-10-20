@@ -80,7 +80,7 @@ const SignUpForm = ({ onClose }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             className="signup-input"
                         />
-                        <button type="submit" className="signup-butt">Sign Up</button>
+                        <button type="submit" className="signup-butto">Sign Up</button>
                     </form>
                 </div>
             </div>

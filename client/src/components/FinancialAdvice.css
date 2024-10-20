@@ -1,25 +1,44 @@
+
 .advicePage {
-  font-family: "Arial", sans-serif;
-  margin: 20px;
+  /* font-family: "Arial", sans-serif; */
+  /* margin: 20px; */
+  display: flex;
+  flex-direction: column;
+  
 }
 
 .adviceHeader {
-  background-color: #f2f4f8;
+  background-color: rgb(227, 242, 253);
   padding: 30px;
   border-radius: 8px;
+  margin-right: 12vw;
+  display: flex;
+  flex-direction:column;
+  /* border: 1px solid black; */
+  margin-left: 11vw;
+  align-items: flex-start;
+  margin-top: 4vw;
+  
 }
-
+.paragraph{
+ text-align: justify;
+}
+/* flex-direction:column; */
 .adviceHeader h1 {
   color: #333;
   font-size: 40px;
   margin-bottom: 15px;
+  
 }
 
 .adviceHeader p {
   color: #666;
-  font-size: 16px;
-  font-style: italic;
-  margin: 16px;
+  font-size: 18px;
+  font-family:'Times New Roman', Times, serif;
+  /* margin: 16px; font-height:2vw*/
+  line-height: 2vw;
+  align-items: justify;
+  font-weight:500;
 }
 
 .adviceForm {
@@ -27,11 +46,34 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  margin-top: 4vw;
+  margin-right:12vw;
+  margin-left: 11vw;
 }
 
 .adviceFormGroup {
   margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.adviceFormGroup input,
+.adviceFormGroup select {
+  flex: 1;
+  margin: 5px;
+  padding: 10px;
+  min-width: 200px;
+}
+
+.adviceFormGroup button {
+  flex: 1;
+  max-width: 150px;
+  margin-left: auto;
+}
+
+.adviceFormGroup label {
+  min-width: 100px;
 }
 
 select,
@@ -50,7 +92,7 @@ input[type="text"].incomeEntry {
 }
 
 button.submitIncome {
-  background-color: #007bff;
+  background-color: #0c0c0c;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -58,45 +100,74 @@ button.submitIncome {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-top: 2vw;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-left:45vw;
+  border: 2px solid black;
 }
 
 button.submitIncome:hover {
-  background-color: #0056b3;
+  background-color: #ffffff;
+  color: #070707;
+  border: 2px solid black;
 }
 
 .financial-summary {
-  font-size: 25px;
-  background-color: #f4f9f4;
-  color: #333;
+  font-size: 1vw;
+  background-color: rgb(227, 242, 253);
+  color: rgb(0, 0, 0);
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Italiana", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-top: 4vw;
+  margin-right:12vw;
+  margin-left: 11vw;
+  border-radius: 8px;
 }
 
 .financial-summary h2, .financial-summary h1 {
-  color: #2a5934; 
+  color:  rgb(80, 75, 75); 
+  
 }
-
+.financial-summary-1{
+  margin-left: 1.3vw;
+  color:  rgb(80, 75, 75); 
+ 
+}
+.financial-summary-1 h2{
+  font-family:'Times New Roman', Times, serif;
+  font-weight: 400;
+}
 .monthly-advice {
   font-size: 25px;
-
+  font-family:'Times New Roman', Times, serif;
   margin-bottom: 20px;
-  background-color: #e6f4ea; 
+  background-color: rgb(227, 242, 253); 
   padding: 10px;
-  border-left: 5px solid #06cf31; 
+  border-left: 5px solid  #9be0f5; 
+  margin-top: 2vw;
 }
 
 .ml-model-output {
-  font-size: 25px;
+  font-size: 1vw;
   margin-top: 30px;
-  background-color: #dff0d8; 
+  /* background-color:   #d2f7fc;  */
   padding: 20px;
-  border-top: 3px solid #2a5934; 
+  border-top: 3px solid #a8deef; 
+  color: rgb(80, 75, 75);
 }
 
 .ml-model-output h1, .ml-model-output h2 {
-  color: #204529; 
+  color:  rgb(80, 75, 75); 
+  
 }
-
+.ml-model-output h2{
+  font-family:'Times New Roman', Times, serif;
+  font-weight: 400;
+}
 .ml-model-output ul {
   list-style-type: none;
   padding: 0;
@@ -106,5 +177,21 @@ button.submitIncome:hover {
   background-color: #e6f4ea; 
   margin: 5px 0;
   padding: 5px 10px;
+}
+footer {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgb(5, 5, 5);
+  text-align: center;
+  padding: 1vw 0;
+  width: 100%;
+  position: relative; 
+  /* Remove absolute positioning */
+    font-size: larger;
+    font-family:'Times New Roman', Times, serif;
+    font-weight: 400;
+  margin-top: 2vw;
+  margin-bottom: 0;
+  font-style: normal;
+    /* bottom: 0; */
 }
 

@@ -40,7 +40,7 @@ function Navbar({ onLogout }) {
         <FontAwesomeIcon icon={faUser} /> Financial Advice
         </Link>
         <Link to="/stocks" className="navbar-link">
-        <FontAwesomeIcon icon={faChartLine} />Stocks
+        <FontAwesomeIcon icon={faChartLine} />Investment
         </Link>
         <div onClick={handleLogout} className="navbar-logout">
           <Link to="/landing" className="navbar-link">

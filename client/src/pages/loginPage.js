@@ -127,7 +127,7 @@ const LoginPage = ({ onLogin }) => {
     return (
       <main>
         <div style={{...welcomeTextStyle,fontFamily: 'Italiana, serifRoboto, sans-serif' }}>Welcome to the AI Financial Assistant</div>
-        <img src="./logo.png" alt="Logo" style={{ width: '200px', margin: '20px auto', display: 'block' }}/>
+        <img src="./moneymate.png" alt="Logo" style={{ width: '200px', margin: '20px auto', display: 'block' }}/>
         <form onSubmit={handleSubmit} style={{...formStyle, fontFamily:'Italiana, serif'}}>
           {loginError && <div style={errorTextStyle}>Invalid email or password. Please try again.</div>}
           <input
